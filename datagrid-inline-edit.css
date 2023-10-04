@@ -1,0 +1,32 @@
+.datagrid-inline-edit-form {
+	& .visually-hidden {
+		height: 0;
+		width: 0;
+		overflow: hidden;
+		outline: 0;
+		border: 0;
+		position: absolute;
+		padding: 0;
+	}
+	& .edit-button-bar {
+		display: flex;
+		flex-direction: row;
+		gap: 6px;
+		align-items: center;
+	}
+	& .stadium-inline-edit-datagrid .form-control {
+		width: var(--datagrid-inline-edit-text-field-size);
+	}
+	& .stadium-inline-edit-datagrid select.form-control {
+		width: var(--datagrid-inline-edit-dropdown-field-size);
+	}
+	& .stadium-inline-edit-datagrid input[type="date"].form-control {
+		width: var(--datagrid-inline-edit-date-field-size);
+	}
+	& .stadium-inline-edit-datagrid input[type="number"].form-control {
+		width: var(--datagrid-inline-edit-number-field-size);
+	}
+	& .inline-edit-hide {
+		display: none;
+	}
+}

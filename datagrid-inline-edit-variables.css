@@ -1,0 +1,6 @@
+:root {
+	--datagrid-inline-edit-text-field-size: auto;
+	--datagrid-inline-edit-dropdown-field-size: auto;
+	--datagrid-inline-edit-date-field-size: auto;
+	--datagrid-inline-edit-number-field-size: 80px; /*fits 5 numbers*/
+}
