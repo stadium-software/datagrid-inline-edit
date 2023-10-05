@@ -334,6 +334,8 @@ function resetDataGrid() {
    3. IdentityColumnHeader: The header of the column that uniquely identifies each row (e.g. ID). **NOTE: The column header might contain spaces that your database column does not contain!**
    4. ButtonClassName: The classname you assigned to the *Button*
 
+![Inline Editing Input Parameters](images/InlineEditingInputParameters.png)
+
 ## Customising CSS
 1. Open the CSS file called [*datagrid-inline-edit-variables.css*](datagrid-inline-edit-variables.css) from this repo
 2. Adjust the variables in the *:root* element as you see fit
