@@ -8,13 +8,11 @@ https://github.com/stadium-software/datagrid-inline-edit/assets/2085324/3119cdca
 1. Check the *Enable Style Sheet* checkbox in the application properties
 
 ## Database, Connector and DataGrid
-Use the instructions from [this repo](https://github.com/stadium-software/samples-database) to setup the database and DataGrid for this sample
-
-<hr>
+1. Use the instructions from [this repo](https://github.com/stadium-software/samples-database) to setup the database and DataGrid for this sample
 
 ## Global Script Setup
 1. Create a Global Script called "InlineEditing"
-2. Add three input parameters to the Global Script
+2. Add four input parameters to the Global Script
    1. DataGridClass
    2. FormFields
    3. IdentityColumnHeader
@@ -30,8 +28,8 @@ let dg = dgParent.querySelector("table");
 dg.classList.add("stadium-inline-edit-datagrid");
 let rowFormFields = ~.Parameters.Input.FormFields;
 let IDColumn = ~.Parameters.Input.IdentityColumnHeader;
-let editButtonParent = document.querySelector("." + ~.Parameters.Input.SaveButtonClassName);
-let editButton = document.querySelector("." + ~.Parameters.Input.SaveButtonClassName + " button");
+let editButtonParent = document.querySelector("." + ~.Parameters.Input.ButtonClassName);
+let editButton = document.querySelector("." + ~.Parameters.Input.ButtonClassName + " button");
 let buttonBar = document.createElement("div");
 let rows = dg.querySelectorAll("tbody tr");
 let IDColNo, rowNumber;
