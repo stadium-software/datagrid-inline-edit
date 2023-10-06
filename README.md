@@ -24,6 +24,7 @@ let scope = this;
 let editing = false;
 let dgClass = "." + ~.Parameters.Input.DataGridClass;
 let dgParent = document.querySelector(dgClass);
+if (!dgParent) dgParent = document.querySelector(".data-grid-container");
 let dg = dgParent.querySelector("table");
 dg.classList.add("stadium-inline-edit-datagrid");
 let rowFormFields = ~.Parameters.Input.FormFields;
@@ -32,7 +33,7 @@ let editButtonParent = document.querySelector("." + ~.Parameters.Input.ButtonCla
 let editButton = document.querySelector("." + ~.Parameters.Input.ButtonClassName + " button");
 let buttonBar = document.createElement("div");
 let rows = dg.querySelectorAll("tbody tr");
-let IDColNo, rowNumber;
+let IDColNo;
 let options = {
     characterData: true,
     attributes: false,
@@ -177,7 +178,7 @@ function prepareDataGrid() {
 
     let pagination = document.querySelector(".pagination");
     if (pagination) pagination.classList.add("visually-hidden");
-    let datagridheader = document.querySelector(".data-grid-header")
+    let datagridheader = document.querySelector(".data-grid-header");
     if (datagridheader) datagridheader.classList.add("visually-hidden");
 
     let arrHeadings = dg.querySelectorAll("thead th a");
