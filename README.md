@@ -2,7 +2,7 @@
 
 Allowing users to conveniently and swiftly edit entire DataGrids or DataGrid rows
 
-https://github.com/stadium-software/datagrid-inline-edit/assets/2085324/3119cdca-7d0f-44a8-8193-d792a2712a27
+https://github.com/stadium-software/datagrid-inline-edit/assets/2085324/9f4ec543-9188-4dd4-bc0c-9ec0382bcaf3
 
 ## Application Setup
 1. Check the *Enable Style Sheet* checkbox in the application properties
