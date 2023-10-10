@@ -1,6 +1,6 @@
 # Datagrid Inline Editing
 
-Allowing users to conveniently and swiftly edit data in bulk can be a challenge for designers and developers alike. 
+Allowing users to conveniently and swiftly edit entire DataGrids or DataGrid rows
 
 https://github.com/stadium-software/datagrid-inline-edit/assets/2085324/3119cdca-7d0f-44a8-8193-d792a2712a27
 

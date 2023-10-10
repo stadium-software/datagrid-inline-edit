@@ -29,4 +29,25 @@
 	& .inline-edit-hide {
 		display: none;
 	}
+	& .stadium-form-save {
+		font-size: var(--row-inline-edit-button-font-size);
+		background-color: var(--row-inline-edit-button-background-color);
+		border: 1px solid var(--row-inline-edit-button-border-color);
+		padding: var(--row-inline-edit-button-topbottom-padding) var(--row-inline-edit-button-rightleft-padding);
+		color: var(--row-inline-edit-button-font-color);
+	}
+	& .opacity {
+		opacity: var(--row-inline-edit-disabled-rows-opacity);
+	}
+	& .edited {
+		animation: fadeOut var(--row-inline-edit-edited-row-fadeout-speed);
+	}
+}
+@keyframes fadeOut {
+	0% {
+		background-color: var(--row-inline-edit-edited-row-fadeout-color);
+	}
+	100% {
+		background-color: transparent;
+	}
 }
