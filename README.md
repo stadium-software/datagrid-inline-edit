@@ -381,7 +381,7 @@ For this module to work, the DataGrid must contain an Edit column and the Edit c
 
 ## Row Editing Global Script Setup
 1. Create a Global Script called "EditableRow"
-2. Add four input parameters to the Global Script
+2. Add five input parameters to the Global Script
    1. DataGridClass
    2. EditColumnHeader
    3. FormFields
