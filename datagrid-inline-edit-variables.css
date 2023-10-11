@@ -4,6 +4,12 @@
 	--datagrid-inline-edit-date-field-size: auto;
 	--datagrid-inline-edit-number-field-size: 80px; /*fits 5 numbers*/
 
+	--datagrid-inline-edit-active-row-background-color: rgba(51, 153, 255, .1);
+	--datagrid-inline-edit-active-row-border-top-color: rgba(51, 153, 255, 1);
+	--datagrid-inline-edit-active-row-border-right-color: rgba(51, 153, 255, 1);
+	--datagrid-inline-edit-active-row-border-bottom-color: rgba(51, 153, 255, 1);
+	--datagrid-inline-edit-active-row-border-left-color: rgba(51, 153, 255, 1);
+
 	--row-inline-edit-disabled-rows-opacity: .6;
 	--row-inline-edit-edited-row-fadeout-color: rgba(25,118,210, .3);
 	--row-inline-edit-edited-row-fadeout-speed: 3s;

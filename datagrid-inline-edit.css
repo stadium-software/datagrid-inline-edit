@@ -1,3 +1,4 @@
+.stadium-inline-edit-datagrid, 
 .datagrid-inline-edit-form {
 	& .visually-hidden {
 		height: 0;
@@ -14,17 +15,31 @@
 		gap: 6px;
 		align-items: center;
 	}
-	& .stadium-inline-edit-datagrid .form-control {
+	& table .form-control {
 		width: var(--datagrid-inline-edit-text-field-size);
 	}
-	& .stadium-inline-edit-datagrid select.form-control {
+	& table select.form-control {
 		width: var(--datagrid-inline-edit-dropdown-field-size);
 	}
-	& .stadium-inline-edit-datagrid input[type="date"].form-control {
+	& table input[type="date"].form-control {
 		width: var(--datagrid-inline-edit-date-field-size);
 	}
-	& .stadium-inline-edit-datagrid input[type="number"].form-control {
+	& table input[type="number"].form-control {
 		width: var(--datagrid-inline-edit-number-field-size);
+	}
+	& .table-striped > tbody > tr.editing:nth-of-type(odd),
+	& .table-striped>tbody>tr.editing:nth-of-type(even) {
+		background-color: var(--datagrid-inline-edit-active-row-background-color);
+		& td {
+			border-top: 1px solid var(--datagrid-inline-edit-active-row-border-top-color);
+			border-bottom: 1px solid var(--datagrid-inline-edit-active-row-border-bottom-color);
+		}
+		& .last-visible-column {
+			border-right: 1px solid var(--datagrid-inline-edit-active-row-border-right-color);
+		}
+		& td:first-child {
+			border-left: 1px solid var(--datagrid-inline-edit-active-row-border-left-color);
+		}
 	}
 	& .inline-edit-hide {
 		display: none;
@@ -39,7 +54,8 @@
 	& .opacity {
 		opacity: var(--row-inline-edit-disabled-rows-opacity);
 	}
-	& .edited {
+	& .table-striped > tbody > tr.edited:nth-of-type(odd),
+	& .table-striped > tbody > tr.edited:nth-of-type(even) {
 		animation: fadeOut var(--row-inline-edit-edited-row-fadeout-speed);
 	}
 }
