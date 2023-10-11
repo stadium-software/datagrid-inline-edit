@@ -713,6 +713,7 @@ Various elements in this module can be styled using the two CSS files in this re
 ## Customising CSS
 1. Open the CSS file called [*datagrid-inline-edit-variables.css*](datagrid-inline-edit-variables.css) from this repo
 2. Adjust the variables in the *:root* element as you see fit
+3. Overwrite the file in the CSS folder of your application with the customised file
 
 ## CSS Upgrading
 To upgrade the CSS in this module, follow the [steps outlined in this repo](https://github.com/stadium-software/samples-upgrading)
