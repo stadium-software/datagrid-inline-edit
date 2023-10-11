@@ -297,9 +297,9 @@ function resetDataGrid() {
 ## DataGrid Editing Page-Script Setup
 1. Create a Script inside of the Page called "SaveGrid"
 2. Add one input parameter to the Script
-   1. GridRows
+   1. GridData
 3. Drag a *Notification* action into the script
-4. In the *Message* property, select the *GridRows* parameter from the *Script Input Parameters* category
+4. In the *Message* property, select the *GridData* parameter from the *Script Input Parameters* category
 
 ## DataGrid Editing Page Setup
 1. Drag a *Button* control into the page and enter some text (e.g. Edit DataGrid)
@@ -371,7 +371,7 @@ function resetDataGrid() {
 5. Complete the Input properties for the script
    1. ButtonClassName: The classname you assigned to the *Button* control (e.g. datagrid-inline-edit-button)
    2. DataGridClass: The classname you assigned to the *DataGrid* (e.g datagrid-inline-edit)
-   3. FormFields: The *List* called "FormFields"
+   3. FormFields: Select the *List* called "FormFields" from the dropdown
    4. IdentityColumnHeader: The header of the column that uniquely identifies each row (e.g. ID)
 
 ![Inline Editing Input Parameters](images/InlineEditingInputParameters.png)
@@ -613,9 +613,9 @@ function handleRowStyling(el) {
 ## Row Editing Page-Script Setup
 1. Create a Script inside of the Page called "SaveRow"
 2. Add one input parameter to the Script
-   1. UpdatedRowData
+   1. RowData
 3. Drag a *Notification* action into the script
-4. In the *Message* property, select the *UpdatedRowData* parameter from the *Script Input Parameters* category
+4. In the *Message* property, select the *RowData* parameter from the *Script Input Parameters* category
 
 ## Row Editing Page Setup
 1. Drag a *DataGrid* control to the page ([see above](#database-connector-and-datagrid))
@@ -685,7 +685,7 @@ function handleRowStyling(el) {
 5. Complete the Input properties for the script
    1. DataGridClass: The classname you assigned to the *DataGrid*
    2. EditColumnHeader: The header of the Edit column
-   3. FormFields: The *List* called "FormFields"
+   3. FormFields: Select the *List* called "FormFields" from the dropdown
    4. IdentityColumnHeader: The header of the column that uniquely identifies each row (e.g. ID)
    5. IdentityValue: The value from the IdentityColumn that uniquely identifies the row
 
@@ -697,13 +697,15 @@ Various elements in this module can be styled using the two CSS files in this re
 ## Applying the CSS
 
 **Stadium 6.6 or higher**
-1. Create a folder called *CSS* inside of your Embedded Files in your application
+1. Create a folder called "CSS" inside of your Embedded Files in your application
 2. Drag the two CSS files from this repo [*datagrid-inline-edit-variables.css*](datagrid-inline-edit-variables.css) and [*datagrid-inline-edit.css*](datagrid-inline-edit.css) into that folder
 3. Paste the link tags below into the *head* property of your application
 ```
 <link rel="stylesheet" href="{EmbeddedFiles}/CSS/datagrid-inline-edit.css">
 <link rel="stylesheet" href="{EmbeddedFiles}/CSS/datagrid-inline-edit-variables.css">
 ``` 
+
+![](images/ApplicationHeadProp.png)
 
 **Versions lower than 6.6**
 1. Copy the CSS from the two css files into the Stylesheet in your application
