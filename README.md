@@ -7,6 +7,7 @@ https://github.com/stadium-software/datagrid-inline-edit/assets/2085324/63e775db
 # Content
 - [Datagrid Inline Editing](#datagrid-inline-editing)
 - [Content](#content)
+- [Version](#version)
 - [Common Setup](#common-setup)
   - [Application Setup](#application-setup)
   - [Database, Connector and DataGrid](#database-connector-and-datagrid)
@@ -28,6 +29,8 @@ https://github.com/stadium-software/datagrid-inline-edit/assets/2085324/63e775db
   - [Customising CSS](#customising-css)
   - [CSS Upgrading](#css-upgrading)
 
+# Version 
+1.0
 
 # Common Setup
 
