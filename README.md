@@ -65,7 +65,7 @@ For this module to work, the page must have a *DataGrid* and a *Button* that use
    4. IdentityColumnHeader
 3. Drag a *JavaScript* action into the script
 4. Add the Javascript below into the JavaScript code property (ignore the validation error message "Invalid script was detected")
-```
+```javascript
 let scope = this;
 let dgClass = "." + ~.Parameters.Input.DataGridClass;
 let dgParent = document.querySelector(dgClass);
@@ -329,7 +329,7 @@ function resetDataGrid() {
    4. min: A minimum value for number or date columns
    5. max: A maximum value for number or date columns
    6. data: A simple list of values for dropdowns (see example below)
-```
+```javascript
 = [{
 	"name": "End Date",
 	"type": "date",
@@ -392,7 +392,8 @@ For this module to work, the DataGrid must contain an Edit column and the Edit c
    5. IdentityValue
 3. Drag a *JavaScript* action into the script
 4. Add the Javascript below into the JavaScript code property (ignore the validation error message "Invalid script was detected")
-```let scope = this;
+```javascript
+let scope = this;
 let dgClass = "." + ~.Parameters.Input.DataGridClass;
 let dgParent = document.querySelector(dgClass);
 if (!dgParent) dgParent = document.querySelector(".data-grid-container");
@@ -643,7 +644,7 @@ function handleRowStyling(el) {
    4. min: A minimum value for number or date columns
    5. max: A maximum value for number or date columns
    6. data: A simple list of values for dropdowns (see example below)
-```
+```javascript
 = [{
 	"name": "End Date",
 	"type": "date",
@@ -703,7 +704,7 @@ Various elements in this module can be styled using the two CSS files in this re
 1. Create a folder called "CSS" inside of your Embedded Files in your application
 2. Drag the two CSS files from this repo [*datagrid-inline-edit-variables.css*](datagrid-inline-edit-variables.css) and [*datagrid-inline-edit.css*](datagrid-inline-edit.css) into that folder
 3. Paste the link tags below into the *head* property of your application
-```
+```html
 <link rel="stylesheet" href="{EmbeddedFiles}/CSS/datagrid-inline-edit.css">
 <link rel="stylesheet" href="{EmbeddedFiles}/CSS/datagrid-inline-edit-variables.css">
 ``` 
