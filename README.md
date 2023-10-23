@@ -329,7 +329,7 @@ function resetDataGrid() {
    4. min: A minimum value for number or date columns
    5. max: A maximum value for number or date columns
    6. data: A simple list of values for dropdowns (see example below)
-```javascript
+```json
 = [{
 	"name": "End Date",
 	"type": "date",
@@ -644,7 +644,7 @@ function handleRowStyling(el) {
    4. min: A minimum value for number or date columns
    5. max: A maximum value for number or date columns
    6. data: A simple list of values for dropdowns (see example below)
-```javascript
+```json
 = [{
 	"name": "End Date",
 	"type": "date",
