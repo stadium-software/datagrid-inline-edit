@@ -8,6 +8,7 @@ https://github.com/stadium-software/datagrid-inline-edit/assets/2085324/63e775db
 - [Datagrid Inline Editing](#datagrid-inline-editing)
 - [Content](#content)
 - [Version](#version)
+- [Changes](#changes)
 - [Common Setup](#common-setup)
   - [Application Setup](#application-setup)
   - [Database, Connector and DataGrid](#database-connector-and-datagrid)
@@ -30,7 +31,17 @@ https://github.com/stadium-software/datagrid-inline-edit/assets/2085324/63e775db
   - [CSS Upgrading](#css-upgrading)
 
 # Version 
-1.0
+1.1
+
+# Changes
+
+**DataGrid Editing**
+1. Added code to return error when ID column is not found
+2. Added code to skip rules that do not have corresponding columns
+
+**Row Editing**
+1. Added code to skip rules that do not have corresponding columns
+2. Bug fix: Empty column headings caused save button to appear in the wrong column
 
 # Common Setup
 
@@ -74,8 +85,19 @@ dgParent.classList.add("stadium-inline-edit-datagrid");
 let dg = dgParent.querySelector("table");
 let rowFormFields = ~.Parameters.Input.FormFields;
 let IDColumn = ~.Parameters.Input.IdentityColumnHeader;
-let editButtonParent = document.querySelector("." + ~.Parameters.Input.ButtonClassName);
-let editButton = document.querySelector("." + ~.Parameters.Input.ButtonClassName + " button");
+let buttonParentClass = ~.Parameters.Input.ButtonClassName;
+let stadiumButtonClass = "stadium-inline-edit-datagrid-button";
+let editButtonParent = document.querySelector("." + buttonParentClass);
+let editButton;
+if (!editButtonParent) {
+    editButtonParent = document.createElement("div");
+    editButton = document.createElement("button");
+    editButtonParent.classList.add(stadiumButtonClass);
+    dgParent.prepend(editButtonParent);
+} else { 
+    editButtonParent.classList.add(stadiumButtonClass);
+    editButton = editButtonParent.querySelector("button");
+}
 let buttonBar = document.createElement("div");
 let rows = dg.querySelectorAll("tbody tr");
 let IDColNo;
@@ -93,6 +115,10 @@ function initForm(){
     let result = formFields.find((obj) => {
         return obj.type == "Identity";
     });
+    if (!result) {
+        console.error("The identity column was not found");
+        return false;
+    }
     IDColNo = result.colNo;
 
     let form = document.querySelector(".datagrid-inline-edit-form");
@@ -107,6 +133,16 @@ function initForm(){
 
     for (let j = 0; j < rows.length; j++){
         for (let i = 0; i < formFields.length; i++) {
+            let colNo = formFields[i].colNo;
+            if (!colNo) continue;
+            let name = formFields[i].name;
+            let value = rows[j].querySelector("td:nth-child(" + formFields[i].colNo + ")").innerText;
+            let type = formFields[i].type;
+            let data = formFields[i].data;
+            let min = formFields[i].min;
+            let max = formFields[i].max;
+            let required = formFields[i].required;
+            let el;
             rows[j].classList.remove("edited");
             rows[j].addEventListener("click", function () { 
                 let editing = document.querySelector(".editing");
@@ -115,15 +151,6 @@ function initForm(){
                 }
                 rows[j].classList.add("editing");
             });
-            let name = formFields[i].name;
-            let colNo = formFields[i].colNo;
-            let value = rows[j].querySelector("td:nth-child(" + formFields[i].colNo + ")").innerText;
-            let type = formFields[i].type;
-            let data = formFields[i].data;
-            let min = formFields[i].min;
-            let max = formFields[i].max;
-            let required = formFields[i].required;
-            let el;
             if (type == "Identity") {
                 el = document.createElement("input");
                 el.value = value;
@@ -439,6 +466,10 @@ function initForm() {
     let result = enrichedRowData.find((obj) => {
         return obj.type == "Identity";
     });
+    if (!result) {
+        console.error("The identity column was not found");
+        return false;
+    }
     IDColNo = result.colNo;
 
     let IDCells = dg.querySelectorAll("tbody tr td:nth-child(" + IDColNo + ")");
@@ -455,8 +486,9 @@ function initForm() {
     let row = dg.querySelector("tbody tr:nth-child(" + rowNumber + ")");
     row.classList.add("editing");
     for (let i = 0; i < enrichedRowData.length; i++) {
-        let name = enrichedRowData[i].name;
         let colNo = enrichedRowData[i].colNo;
+        if (!colNo) continue;
+        let name = enrichedRowData[i].name;
         let value = row.querySelector("td:nth-child(" + enrichedRowData[i].colNo + ")").innerText;
         let type = enrichedRowData[i].type;
         let data = enrichedRowData[i].data;
@@ -540,9 +572,9 @@ function enrichRowData(data) {
         if (index > -1) {
             data[index].colNo = i + 1;
         } else if (IDColumn.toLowerCase() == arrHeadings[i].innerText.toLowerCase()) {
-            data.push({name: IDColumn, colNo:i + 1, type:"Identity"});
-        } else if (EditColumn.toLowerCase() == arrHeadings[i].innerText.toLowerCase()) { 
-            data.push({name: "", colNo:i + 1, type:"EditLink"});
+            data.push({ name: IDColumn, colNo: i + 1, type: "Identity" });
+        } else if (EditColumn.toLowerCase() == arrHeadings[i].innerText.toLowerCase()) {
+            data.push({ name: EditColumn, colNo: i + 1, type: "EditLink" });
         }
     }
     return data;
