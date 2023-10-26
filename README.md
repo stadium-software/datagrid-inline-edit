@@ -333,9 +333,10 @@ function resetDataGrid() {
 
 ## DataGrid Editing Page Setup
 1. Drag a *Button* control into the page and enter some text (e.g. Edit DataGrid)
-2. Add a class of your choosing to the *Button* *Classes* property (e.g. datagrid-inline-edit-button)
+2. Add a class of your choosing to the *Button* *Classes* property to uniquely identify this button (e.g. datagrid-inline-edit-button)
 3. Drag a *DataGrid* control to the page ([see above](#database-connector-and-datagrid))
 4. Add a class of your choosing to the *DataGrid* *Classes* property (e.g datagrid-inline-edit)
+5. Note: If multiple editable DataGrids are shown on one page, each DataGrid and each corresponding edit button must have unique classnames
 
 ## DataGrid Editing Page.Load Event Setup
 1. Populate the DataGrid with data ([see above](#database-connector-and-datagrid))
@@ -399,8 +400,8 @@ function resetDataGrid() {
 ```
 4. Drag the Global Script called "EditableDataGrid" into the event script
 5. Complete the Input properties for the script
-   1. ButtonClassName: The classname you assigned to the *Button* control (e.g. datagrid-inline-edit-button)
-   2. DataGridClass: The classname you assigned to the *DataGrid* (e.g datagrid-inline-edit)
+   1. ButtonClassName: The unique classname you assigned to the *Button* control (e.g. datagrid-inline-edit-button)
+   2. DataGridClass: The unique classname you assigned to the *DataGrid* (e.g datagrid-inline-edit)
    3. FormFields: Select the *List* called "FormFields" from the dropdown
    4. IdentityColumnHeader: The header of the column that uniquely identifies each row (e.g. ID)
 
@@ -655,7 +656,8 @@ function handleRowStyling(el) {
 
 ## Row Editing Page Setup
 1. Drag a *DataGrid* control to the page ([see above](#database-connector-and-datagrid))
-2. Add a class of your choosing to the *DataGrid* *Classes* property (e.g datagrid-inline-edit)
+2. Add a class of your choosing to the *DataGrid* *Classes* property ti uniquely identify this DataGrid on this page (e.g datagrid-inline-edit)
+3. Note: If multiple editable DataGrids are shown on one page, each DataGrid must have a unique classname
 
 ## Row Editing Page.Load Event Setup
 1. Populate the DataGrid with data ([see above](#database-connector-and-datagrid))
@@ -719,7 +721,7 @@ function handleRowStyling(el) {
 ```
 4. Drag the Global Script called "EditableRow" into the event script
 5. Complete the Input properties for the script
-   1. DataGridClass: The classname you assigned to the *DataGrid*
+   1. DataGridClass: The unique classname you assigned to the *DataGrid*
    2. EditColumnHeader: The header of the Edit column
    3. FormFields: Select the *List* called "FormFields" from the dropdown
    4. IdentityColumnHeader: The header of the column that uniquely identifies each row (e.g. ID)
