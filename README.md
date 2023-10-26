@@ -8,7 +8,6 @@ https://github.com/stadium-software/datagrid-inline-edit/assets/2085324/63e775db
 - [Datagrid Inline Editing](#datagrid-inline-editing)
 - [Content](#content)
 - [Version](#version)
-- [Changes](#changes)
 - [Common Setup](#common-setup)
   - [Application Setup](#application-setup)
   - [Database, Connector and DataGrid](#database-connector-and-datagrid)
@@ -33,15 +32,15 @@ https://github.com/stadium-software/datagrid-inline-edit/assets/2085324/63e775db
 # Version 
 1.1
 
-# Changes
-
 **DataGrid Editing**
 1. Added code to return error when ID column is not found
 2. Added code to skip rules that do not have corresponding columns
+3. Added code to detect uniqueness of DataGrid class on page
 
 **Row Editing**
 1. Added code to skip rules that do not have corresponding columns
 2. Bug fix: Empty column headings caused save button to appear in the wrong column
+3. Added code to detect uniqueness of DataGrid class on page
 
 # Common Setup
 
@@ -78,11 +77,18 @@ For this module to work, the page must have a *DataGrid* and a *Button* that use
 4. Add the Javascript below into the JavaScript code property (ignore the validation error message "Invalid script was detected")
 ```javascript
 let scope = this;
-let dgClass = "." + ~.Parameters.Input.DataGridClass;
-let dgParent = document.querySelector(dgClass);
-if (!dgParent) dgParent = document.querySelector(".data-grid-container");
-dgParent.classList.add("stadium-inline-edit-datagrid");
-let dg = dgParent.querySelector("table");
+let dgClassName = "." + ~.Parameters.Input.DataGridClass;
+let dg = document.querySelectorAll(dgClassName);
+if (dg.length == 0) {
+    dg = document.querySelector(".data-grid-container");
+} else if (dg.length > 1) {
+    console.error("The class '" + dgClassName + "' is assigned to multiple DataGrids. DataGrids using this script must have unique classnames");
+    return false;
+} else { 
+    dg = dg[0];
+}
+dg.classList.add("stadium-inline-edit-datagrid");
+let table = dg.querySelector("table");
 let rowFormFields = ~.Parameters.Input.FormFields;
 let IDColumn = ~.Parameters.Input.IdentityColumnHeader;
 let buttonParentClass = ~.Parameters.Input.ButtonClassName;
@@ -93,13 +99,13 @@ if (!editButtonParent) {
     editButtonParent = document.createElement("div");
     editButton = document.createElement("button");
     editButtonParent.classList.add(stadiumButtonClass);
-    dgParent.prepend(editButtonParent);
+    dg.prepend(editButtonParent);
 } else { 
     editButtonParent.classList.add(stadiumButtonClass);
     editButton = editButtonParent.querySelector("button");
 }
 let buttonBar = document.createElement("div");
-let rows = dg.querySelectorAll("tbody tr");
+let rows = table.querySelectorAll("tbody tr");
 let IDColNo;
 let options = {
     characterData: true,
@@ -259,7 +265,7 @@ function prepareDataGrid() {
     let datagridheader = document.querySelector(".data-grid-header");
     if (datagridheader) datagridheader.classList.add("visually-hidden");
 
-    let arrHeadings = dg.querySelectorAll("thead th a");
+    let arrHeadings = table.querySelectorAll("thead th a");
     for (let i = 0; i < arrHeadings.length; i++) {
         arrHeadings[i].classList.add("visually-hidden");
         let heading = document.createElement("span");
@@ -286,7 +292,7 @@ function saveButtonClick(e) {
     scope.SaveGrid(arrGridData);
 }
 function enrichFormFields(data) {
-    let arrHeadings = dg.querySelectorAll("thead th");
+    let arrHeadings = table.querySelectorAll("thead th");
     for (let i = 0; i < arrHeadings.length; i++) {
         let heading = arrHeadings[i].querySelector("a");
         if (heading) {
@@ -307,17 +313,17 @@ function resetDataGrid() {
     if (editing) {
         editing.classList.remove("editing");
     }
-    let allFields = dg.querySelectorAll(".stadium-inline-form-control");
+    let allFields = table.querySelectorAll(".stadium-inline-form-control");
     for (let i = 0; i < allFields.length; i++) { 
         allFields[i].remove();
     }
-    let visuallyHidden = dgParent.querySelectorAll(".visually-hidden");
+    let visuallyHidden = dg.querySelectorAll(".visually-hidden");
     for (let i = 0; i < visuallyHidden.length; i++) { 
         visuallyHidden[i].classList.remove("visually-hidden");
     }
     editButton.classList.remove("visually-hidden");
     buttonBar.remove();
-    let arrHeadings = dg.querySelectorAll(".inline-edit-heading");
+    let arrHeadings = table.querySelectorAll(".inline-edit-heading");
     for (let i = 0; i < arrHeadings.length; i++) {
         arrHeadings[i].remove();
      }
@@ -422,11 +428,18 @@ For this module to work, the DataGrid must contain an Edit column and the Edit c
 4. Add the Javascript below into the JavaScript code property (ignore the validation error message "Invalid script was detected")
 ```javascript
 let scope = this;
-let dgClass = "." + ~.Parameters.Input.DataGridClass;
-let dgParent = document.querySelector(dgClass);
-if (!dgParent) dgParent = document.querySelector(".data-grid-container");
-dgParent.classList.add("stadium-inline-edit-datagrid");
-let dg = dgParent.querySelector("table");
+let dgClassName = "." + ~.Parameters.Input.DataGridClass;
+let dg = document.querySelectorAll(dgClassName);
+if (dg.length == 0) {
+    dg = document.querySelector(".data-grid-container");
+} else if (dg.length > 1) {
+    console.error("The class '" + dgClassName + "' is assigned to multiple DataGrids. DataGrids using this script must have unique classnames");
+    return false;
+} else { 
+    dg = dg[0];
+}
+dg.classList.add("stadium-inline-edit-datagrid");
+let table = dg.querySelector("table");
 let rowData = ~.Parameters.Input.FormFields;
 let IDColumn = ~.Parameters.Input.IdentityColumnHeader;
 let IDValue = ~.Parameters.Input.IdentityValue;
@@ -473,7 +486,7 @@ function initForm() {
     }
     IDColNo = result.colNo;
 
-    let IDCells = dg.querySelectorAll("tbody tr td:nth-child(" + IDColNo + ")");
+    let IDCells = table.querySelectorAll("tbody tr td:nth-child(" + IDColNo + ")");
     for (let i = 0; i < IDCells.length; i++) {
         let rowtr = IDCells[i].parentElement;
         if (IDCells[i].innerText == IDValue) {
@@ -484,7 +497,7 @@ function initForm() {
         }
     }
 
-    let row = dg.querySelector("tbody tr:nth-child(" + rowNumber + ")");
+    let row = table.querySelector("tbody tr:nth-child(" + rowNumber + ")");
     row.classList.add("editing");
     for (let i = 0; i < enrichedRowData.length; i++) {
         let colNo = enrichedRowData[i].colNo;
@@ -567,7 +580,7 @@ function initForm() {
     }
 }
 function enrichRowData(data) {
-    let arrHeadings = dg.querySelectorAll("thead th a");
+    let arrHeadings = table.querySelectorAll("thead th a");
     for (let i = 0; i < arrHeadings.length; i++) {
         let index = data.findIndex((col) => col.name.toLowerCase().replaceAll(" ","") == arrHeadings[i].innerText.toLowerCase().replaceAll(" ",""));
         if (index > -1) {
@@ -582,15 +595,15 @@ function enrichRowData(data) {
 }
 function resetDataGridRow(){ 
     observer.disconnect();
-    let allFields = dg.querySelectorAll(".stadium-inline-form-control");
+    let allFields = table.querySelectorAll(".stadium-inline-form-control");
     for (let i = 0; i < allFields.length; i++) { 
         allFields[i].remove();
     }
-    let visuallyHidden = dg.querySelectorAll(".visually-hidden");
+    let visuallyHidden = table.querySelectorAll(".visually-hidden");
     for (let i = 0; i < visuallyHidden.length; i++) { 
         visuallyHidden[i].classList.remove("visually-hidden");
     }
-    let rows = dg.querySelectorAll("tbody tr");
+    let rows = table.querySelectorAll("tbody tr");
     for (let i = 0; i < rows.length; i++) { 
         rows[i].classList.remove("opacity");
         rows[i].removeEventListener("click", resetDataGridRow, false);
@@ -600,7 +613,7 @@ function resetDataGridRow(){
 function saveButtonClick(e) { 
     e.preventDefault();
     e.target.closest("form").removeEventListener("submit", saveButtonClick);
-    let editedrow = dg.querySelector("tbody tr:nth-child(" + rowNumber + ")");
+    let editedrow = table.querySelector("tbody tr:nth-child(" + rowNumber + ")");
     let formFields = editedrow.querySelectorAll("[stadium-form-name]");
     let arrData = [];
     for (let i = 0; i < formFields.length; i++) { 
@@ -614,10 +627,10 @@ function saveButtonClick(e) {
     handleRowStyling(editedrow);
 }
 function removeForm(){ 
-    let formParent = dgParent.parentElement.parentElement;
+    let formParent = dg.parentElement.parentElement;
     let form = formParent.querySelector(".datagrid-inline-edit-form");
     if (form) {
-        formParent.appendChild(dgParent);
+        formParent.appendChild(dg);
         form.remove();
     }
     let editing = document.querySelector(".editing");
@@ -626,12 +639,12 @@ function removeForm(){
     }
 }
 function addForm() { 
-    let formParent = dgParent.parentElement.parentElement;
+    let formParent = dg.parentElement.parentElement;
     let form = formParent.querySelector(".datagrid-inline-edit-form");
     form = document.createElement('form');
     form.classList.add("datagrid-inline-edit-form");
-    dgParent.parentNode.insertBefore(form, dgParent);
-    form.appendChild(dgParent);
+    dg.parentNode.insertBefore(form, dg);
+    form.appendChild(dg);
     form.addEventListener("submit", saveButtonClick);
 }
 function handleRowStyling(el) { 
