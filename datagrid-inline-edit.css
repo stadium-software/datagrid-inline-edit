@@ -1,4 +1,3 @@
-.stadium-inline-edit-datagrid, 
 .datagrid-inline-edit-form {
 	& .visually-hidden {
 		height: 0;
@@ -54,16 +53,28 @@
 	& .opacity {
 		opacity: var(--row-inline-edit-disabled-rows-opacity);
 	}
-	& .table-striped > tbody > tr.edited:nth-of-type(odd),
-	& .table-striped > tbody > tr.edited:nth-of-type(even) {
-		animation: fadeOut var(--row-inline-edit-edited-row-fadeout-speed);
+	& .data-grid-container .table-striped>tbody>tr.edit-form {
+		background-color: var(--row-inline-edit-row-background-color);
+	}
+	& .data-grid-container .table-striped.edit-orig-table {
+		display: none;
+	}
+	& .edit-orig {
+		height: 0;
+		width: 0;
+		overflow: hidden;
+		outline: 0;
+		border: 0;
+		position: absolute;
+		padding: 0;
 	}
 }
-@keyframes fadeOut {
-	0% {
-		background-color: var(--row-inline-edit-edited-row-fadeout-color);
-	}
-	100% {
-		background-color: transparent;
-	}
+button.btn.visually-hidden {
+	height: 0;
+	width: 0;
+	overflow: hidden;
+	outline: 0;
+	border: 0;
+	position: absolute;
+	padding: 0;
 }

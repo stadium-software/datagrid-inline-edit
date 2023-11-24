@@ -11,8 +11,7 @@
 	--datagrid-inline-edit-active-row-border-left-color: rgba(51, 153, 255, 1);
 
 	--row-inline-edit-disabled-rows-opacity: .6;
-	--row-inline-edit-edited-row-fadeout-color: rgba(25,118,210, .3);
-	--row-inline-edit-edited-row-fadeout-speed: 3s;
+	--row-inline-edit-row-background-color: rgba(25,118,210, .3);
 	
 	--row-inline-edit-button-background-color: #1976D2;
 	--row-inline-edit-button-border-color: #1976d2;

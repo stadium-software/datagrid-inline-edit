@@ -47,6 +47,9 @@ This repo contains one Stadium 6.7 application
 2. Bug fix: Empty column headings caused save button to appear in the wrong column
 3. Added code to detect uniqueness of DataGrid class on page
 
+1.2
+1. Updated script to cater for changed DataGrid rendering
+
 # Common Setup
 
 ## Application Setup
@@ -81,7 +84,7 @@ For this module to work, the page must have a *DataGrid* and a *Button* that use
 3. Drag a *JavaScript* action into the script
 4. Add the Javascript below into the JavaScript code property (ignore the validation error message "Invalid script was detected")
 ```javascript
-/*Stadium Script Version 1.1*/
+/*Stadium Script Version 1.2*/
 let scope = this;
 let dgClassName = "." + ~.Parameters.Input.DataGridClass;
 let dg = document.querySelectorAll(dgClassName);
@@ -222,6 +225,13 @@ function initForm(){
             if (el) {
                 el.classList.add("stadium-inline-form-control");
                 let cell = rows[j].querySelector("td:nth-child(" + colNo + ")");
+                if (!cell.querySelector("div")) { 
+                    let celldiv = document.createElement("div");
+                    let cellContent = cell.innerHTML;
+                    cell.innerHTML = "";
+                    celldiv.innerHTML = cellContent;
+                    cell.appendChild(celldiv);
+                }
                 if (type != "Identity") cell.querySelector("div").classList.add("visually-hidden");
                 if (required) el.setAttribute("required", "");
                 cell.appendChild(el);
@@ -433,7 +443,7 @@ For this module to work, the DataGrid must contain an Edit column and the Edit c
 3. Drag a *JavaScript* action into the script
 4. Add the Javascript below into the JavaScript code property (ignore the validation error message "Invalid script was detected")
 ```javascript
-/*Stadium Script Version 1.1*/
+/*Stadium Script Version 1.2*/
 let scope = this;
 let dgClassName = "." + ~.Parameters.Input.DataGridClass;
 let dg = document.querySelectorAll(dgClassName);
@@ -581,6 +591,13 @@ function initForm() {
             el.classList.add("stadium-inline-form-control");
             if (required) el.setAttribute("required", "");
             let cell = row.querySelector("td:nth-child(" + colNo + ")");
+            if (!cell.querySelector("div")) { 
+                let celldiv = document.createElement("div");
+                let cellContent = cell.innerHTML;
+                cell.innerHTML = "";
+                celldiv.innerHTML = cellContent;
+                cell.appendChild(celldiv);
+            }
             if (type != "Identity") cell.querySelector("div").classList.add("visually-hidden");
             cell.appendChild(el);
         }
