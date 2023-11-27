@@ -50,6 +50,9 @@ This repo contains one Stadium 6.7 application
 1.2
 1. Updated script to cater for changed DataGrid rendering
 
+1.3
+1. Added custom event handler feature
+
 # Common Setup
 
 ## Application Setup
@@ -85,7 +88,7 @@ For this module to work, the page must have a *DataGrid* and a *Button* that use
 3. Drag a *JavaScript* action into the script
 4. Add the Javascript below into the JavaScript code property (ignore the validation error message "Invalid script was detected")
 ```javascript
-/*Stadium Script Version 1.2*/
+/*Stadium Script Version 1.3*/
 let scope = this;
 let random =  Math.round(Math.random() * 1000);
 resetDataGrid();
@@ -453,7 +456,7 @@ For this module to work, the DataGrid must contain an Edit column and the Edit c
 3. Drag a *JavaScript* action into the script
 4. Add the Javascript below into the JavaScript code property (ignore the validation error message "Invalid script was detected")
 ```javascript
-/*Stadium Script Version 1.2*/
+/*Stadium Script Version 1.3*/
 let scope = this;
 let callback = ~.Parameters.Input.CallbackScript;
 console.log(callback);
