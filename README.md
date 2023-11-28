@@ -47,11 +47,11 @@ This repo contains one Stadium 6.7 application
 2. Bug fix: Empty column headings caused save button to appear in the wrong column
 3. Added code to detect uniqueness of DataGrid class on page
 
-1.2
-1. Updated script to cater for changed DataGrid rendering
+1.2 Updated script to cater for changed DataGrid rendering
 
-1.3
-1. Added custom event handler feature
+1.3 Added custom event handler feature
+
+1.4 Fixed Selectable column bug
 
 # Common Setup
 
@@ -88,7 +88,7 @@ For this module to work, the page must have a *DataGrid* and a *Button* that use
 3. Drag a *JavaScript* action into the script
 4. Add the Javascript below into the JavaScript code property (ignore the validation error message "Invalid script was detected")
 ```javascript
-/*Stadium Script Version 1.3*/
+/*Stadium Script Version 1.4*/
 let scope = this;
 let random =  Math.round(Math.random() * 1000);
 resetDataGrid();
@@ -264,7 +264,7 @@ function preparePage(clonedTbl) {
     let saveButton = document.createElement("button");
     saveButton.setAttribute("class", "btn btn-lg btn-default");
     saveButton.setAttribute("type", "submit");
-    saveButton.setAttribute("form","form" + random)
+    saveButton.setAttribute("form", "form" + random);
     saveButton.innerText = "Save";
 
     let cancelLink = document.createElement("a");
@@ -276,13 +276,13 @@ function preparePage(clonedTbl) {
     buttonBar.appendChild(cancelLink);
     editButtonParent.appendChild(buttonBar);
 
-    let arrHeadings = clonedTbl.querySelectorAll("thead th a");
+    let arrHeadings = clonedTbl.querySelectorAll("thead th");
     for (let i = 0; i < arrHeadings.length; i++) {
-        arrHeadings[i].classList.add("visually-hidden");
+        arrHeadings[i].childNodes[0].classList.add("visually-hidden");
         let heading = document.createElement("span");
         heading.innerText = arrHeadings[i].innerText;
         heading.classList.add("inline-edit-heading");
-        arrHeadings[i].parentElement.appendChild(heading);
+        arrHeadings[i].innerHTML = heading.innerHTML;
     }
 
     clonedTbl.querySelector("tfoot").remove();
@@ -308,7 +308,7 @@ async function saveButtonClick(e) {
     resetDataGrid();
 }
 function enrichFormFields(data) {
-    let arrHeadings = table.querySelectorAll("thead th a");
+    let arrHeadings = table.querySelectorAll("thead th");
     data.forEach((element, index) => {
         if (element.name) {
             data[index].name = element.name.toLowerCase().replaceAll(" ", "");
@@ -351,9 +351,6 @@ function insertForm() {
     form.addEventListener("submit", saveButtonClick);
     dg.parentElement.insertBefore(form, dg);
     form.appendChild(dg);
-}
-function insertAfter(newNode, existingNode) {
-    existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
 }
 ```
 
@@ -456,7 +453,7 @@ For this module to work, the DataGrid must contain an Edit column and the Edit c
 3. Drag a *JavaScript* action into the script
 4. Add the Javascript below into the JavaScript code property (ignore the validation error message "Invalid script was detected")
 ```javascript
-/*Stadium Script Version 1.3*/
+/*Stadium Script Version 1.4*/
 let scope = this;
 let callback = ~.Parameters.Input.CallbackScript;
 console.log(callback);
@@ -616,7 +613,7 @@ function initForm() {
     insertAfter(editform, row);
 }
 function enrichRowData(data) {
-    let arrHeadings = table.querySelectorAll("thead th a");
+    let arrHeadings = table.querySelectorAll("thead th");
     data.forEach((element, index) => {
         if (element.name) {
             data[index].name = element.name.toLowerCase().replaceAll(" ", "");
