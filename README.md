@@ -12,22 +12,22 @@ This repo contains one Stadium 6.7 application
 - [Datagrid Inline Editing](#datagrid-inline-editing)
   - [Sample applications](#sample-applications)
 - [Content](#content)
-- [Version](#version)
+  - [Version](#version)
+- [Setup](#setup)
   - [Application Setup](#application-setup)
   - [Database, Connector and DataGrid](#database-connector-and-datagrid)
   - [Type Setup](#type-setup)
-- [DataGrid Editing](#datagrid-editing)
-  - [DataGrid Editing Global Script Setup](#datagrid-editing-global-script-setup)
-  - [DataGrid Editing Page-Script Setup](#datagrid-editing-page-script-setup)
-  - [DataGrid Editing Page Setup](#datagrid-editing-page-setup)
-  - [DataGrid Editing Page.Load Event Setup](#datagrid-editing-pageload-event-setup)
-  - [DataGrid Editing Button.Click Event Setup](#datagrid-editing-buttonclick-event-setup)
+  - [Global Script Setup](#global-script-setup)
+  - [Page-Script Setup](#page-script-setup)
+  - [Page Setup](#page-setup)
+  - [Page.Load Event Setup](#pageload-event-setup)
+  - [Button.Click Event Setup](#buttonclick-event-setup)
 - [Styling](#styling)
   - [Applying the CSS](#applying-the-css)
   - [Customising CSS](#customising-css)
   - [CSS Upgrading](#css-upgrading)
 
-# Version 
+## Version 
 
 1.1 DataGrid Editing
 1. Added code to return error when ID column is not found
@@ -39,6 +39,8 @@ This repo contains one Stadium 6.7 application
 1.3 Added custom event handler feature
 
 1.4 Fixed Selectable column bug
+
+# Setup
 
 ## Application Setup
 1. Check the *Enable Style Sheet* checkbox in the application properties
@@ -59,10 +61,7 @@ This repo contains one Stadium 6.7 application
 
 ![Form Fields](images/FormFieldType.png)
 
-# DataGrid Editing
-For this module to work, the page must have a *DataGrid* and a *Button* that users use to enable the edit functionality
-
-## DataGrid Editing Global Script Setup
+## Global Script Setup
 1. Create a Global Script called "EditableDataGrid"
 2. Add four input parameters to the Global Script
    1. ButtonClassName
@@ -339,24 +338,24 @@ function insertForm() {
 }
 ```
 
-## DataGrid Editing Page-Script Setup
+## Page-Script Setup
 1. Create a Script inside of the Page with any name you like (e.g. "SaveGrid")
 2. Add one input parameter to the Script
    1. GridData
 3. Drag a *Notification* action into the script
 4. In the *Message* property, select the *GridData* parameter from the *Script Input Parameters* category
 
-## DataGrid Editing Page Setup
+## Page Setup
 1. Drag a *Button* control into the page and enter some text (e.g. Edit DataGrid)
 2. Add a class of your choosing to the *Button* *Classes* property to uniquely identify this button (e.g. datagrid-inline-edit-button)
 3. Drag a *DataGrid* control to the page ([see above](#database-connector-and-datagrid))
 4. Add a class of your choosing to the *DataGrid* *Classes* property (e.g datagrid-inline-edit)
 5. Note: If multiple editable DataGrids are shown on one page, each DataGrid and each corresponding edit button must have unique classnames
 
-## DataGrid Editing Page.Load Event Setup
+## Page.Load Event Setup
 1. Populate the DataGrid with data ([see above](#database-connector-and-datagrid))
 
-## DataGrid Editing Button.Click Event Setup
+## Button.Click Event Setup
 1. Drag a *List* action into the event script and name the List "FormFields"
 2. Set the List *Item Type* property to "Types.FormField"
 3. Define the editable columns of your datagrid and their form fields
