@@ -70,7 +70,7 @@ This repo contains one Stadium 6.7 application
    4. IdentityColumnHeader
    5. CallbackScript
 3. Drag a *JavaScript* action into the script
-4. Add the Javascript below into the JavaScript code property (ignore the validation error message "Invalid script was detected")
+4. Add the Javascript below into the JavaScript code property
 ```javascript
 /*Stadium Script Version 1.4*/
 let scope = this;
@@ -100,6 +100,17 @@ if (buttons.length == 0) {
     console.error("The class '" + buttonParentClass + "' is assigned to multiple buttons on this page. Buttons using this script must have unique classnames");
     return false;
 }
+let setRowEditingMode = (e) => {
+    let currentRow = e.target.closest("tr");
+    let editing = document.querySelector(".editing");
+    if (editing) {
+        editing.classList.remove("editing");
+    }
+    currentRow.classList.add("editing");
+};
+let getIndex = (heystack, needle) => {
+    return heystack.findIndex((col) => col.name == needle);
+};
 
 insertForm();
 initForm();
@@ -133,13 +144,7 @@ function initForm(){
             let max = formFields[i].max;
             let required = formFields[i].required;
             let el;
-            editRow.addEventListener("click", function () { 
-                let editing = document.querySelector(".editing");
-                if (editing) {
-                    editing.classList.remove("editing");
-                }
-                editRow.classList.add("editing");
-            });
+            editRow.addEventListener("click", setRowEditingMode);
             if (type == "date") {
                 el = document.createElement("input");
                 el.setAttribute("type", "date");
@@ -302,7 +307,7 @@ function enrichFormFields(data) {
     });
     for (let i = 0; i < arrHeadings.length; i++) {
         let heading = arrHeadings[i].innerText.toLowerCase().replaceAll(" ", "");
-        let index = data.findIndex((col) => col.name == heading);
+        let index = getIndex(data, heading);
         if (index > -1) {
             data[index].colNo = i + 1;
         } else if (IDColumn.toLowerCase() == arrHeadings[i].innerText.toLowerCase()) {
