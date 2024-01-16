@@ -40,6 +40,8 @@ This repo contains one Stadium 6.7 application
 
 1.4 Fixed Selectable column bug
 
+1.5 Enabled adding ID column as number; fixed bug: no ID column in result
+
 # Setup
 
 ## Application Setup
@@ -72,7 +74,7 @@ This repo contains one Stadium 6.7 application
 3. Drag a *JavaScript* action into the script
 4. Add the Javascript below into the JavaScript code property
 ```javascript
-/*Stadium Script Version 1.4*/
+/*Stadium Script Version 1.5*/
 let scope = this;
 let random =  Math.round(Math.random() * 1000);
 resetDataGrid();
@@ -133,6 +135,8 @@ function initForm(){
         let origRow = rows[j];
         let editRow = clonedRows[j];
         editRow.id = origRow.id + "-clone";
+        console.log(result.colNo);
+        editRow.setAttribute("identity", editRow.querySelector("td:nth-child(" + result.colNo + ")").textContent);
         for (let i = 0; i < formFields.length; i++) {
             let origCell = origRow.querySelectorAll("td")[i];
             let editCell = editRow.querySelectorAll("td")[i];
@@ -285,6 +289,8 @@ async function saveButtonClick(e) {
     for (let j = 0; j < rows.length; j++) {
         let formFields = rows[j].querySelectorAll("[stadium-form-name]");
         let arrData = [];
+        let rowID = rows[j].getAttribute("Identity");
+        arrData.push({ Name: "Identity", Value: rowID });
         for (let i = 0; i < formFields.length; i++) {
             let fieldValue = formFields[i].value;
             if (formFields[i].getAttribute("type") == "checkbox") fieldValue = formFields[i].checked;
@@ -310,8 +316,10 @@ function enrichFormFields(data) {
         let index = getIndex(data, heading);
         if (index > -1) {
             data[index].colNo = i + 1;
-        } else if (IDColumn.toLowerCase() == arrHeadings[i].innerText.toLowerCase()) {
+        } else if (IDColumn.toString().toLowerCase() == arrHeadings[i].innerText.toLowerCase()) {
             data.push({ name: IDColumn, colNo: i + 1, type: "Identity" });
+        } else if (IDColumn == (i + 1)) {
+            data.push({ name: "Identity", colNo: IDColumn, type: "Identity" });
         } else { 
             data.push({colNo: i + 1, name: heading});
         }
@@ -422,7 +430,7 @@ function insertForm() {
    1. ButtonClassName: The unique classname you assigned to the *Button* control (e.g. datagrid-inline-edit-button)
    2. DataGridClass: The unique classname you assigned to the *DataGrid* (e.g datagrid-inline-edit)
    3. FormFields: Select the *List* called "FormFields" from the dropdown
-   4. IdentityColumnHeader: The header of the column that uniquely identifies each row (e.g. ID)
+   4. IdentityColumnHeader: The header of the column that uniquely identifies each row (e.g. ID) OR the column number (e.g. 1)
    5. CallbackScript: The name of the page-level script that will process the updated data (e.g. SaveGrid)
 
 ![Inline Editing Input Parameters](images/InlineEditingInputParameters.png)
