@@ -70,7 +70,7 @@
 		padding: 0;
 	}
 }
-button.btn.visually-hidden {
+#app button.btn.btn-default.visually-hidden {
 	height: 0;
 	width: 0;
 	overflow: hidden;
