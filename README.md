@@ -135,7 +135,6 @@ function initForm(){
         let origRow = rows[j];
         let editRow = clonedRows[j];
         editRow.id = origRow.id + "-clone";
-        console.log(result.colNo);
         editRow.setAttribute("identity", editRow.querySelector("td:nth-child(" + result.colNo + ")").textContent);
         for (let i = 0; i < formFields.length; i++) {
             let origCell = origRow.querySelectorAll("td")[i];
