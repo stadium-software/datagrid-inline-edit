@@ -4,13 +4,8 @@ Allowing users to conveniently and swiftly edit entire DataGrids
 
 https://github.com/stadium-software/datagrid-inline-edit/assets/2085324/4287fc6c-a790-4161-9fd2-c92e1d56da3d
 
-## Sample applications
-This repo contains one Stadium 6.7 application
-[DataGridInlineEditing.sapz](Stadium6/DataGridInlineEditing.sapz?raw=true)
-
 # Content
 - [Datagrid Inline Editing](#datagrid-inline-editing)
-  - [Sample applications](#sample-applications)
 - [Content](#content)
   - [Version](#version)
 - [Setup](#setup)
