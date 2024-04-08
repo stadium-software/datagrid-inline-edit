@@ -22,7 +22,6 @@ This repo contains one Stadium 6.7 application
   - [Page Setup](#page-setup)
   - [Page.Load Event Setup](#pageload-event-setup)
   - [Button.Click Event Setup](#buttonclick-event-setup)
-- [Styling](#styling)
   - [Applying the CSS](#applying-the-css)
   - [Customising CSS](#customising-css)
   - [CSS Upgrading](#css-upgrading)
@@ -42,6 +41,16 @@ This repo contains one Stadium 6.7 application
 
 1.5 Enabled adding ID column as number; fixed bug: no ID column in result
 
+2.0 Added checkbox column support; changed header-based column definition to column count; added text and value definition for dropdowns. **Required changes**
+1. FormField Type: change "name" property to "column" (see [Type Setup](#type-setup))
+2. Script (see [Global Script Setup](#global-script-setup))
+   1. Update to version below
+   2. Change input parameter name "IdentityColumnHeader" to "IdentityColumn"
+3. Event handler (see [Button.Click Event Script](#buttonclick-event-setup))
+   1. Change FormFields list inputs for "column" (previously "name") from strings to integers
+   2. Change FormFields list inputs for "dropdown" from list of strings to list of objects (see [example below](#buttonclick-event-setup))
+   3. Amend value for script input parameter IDColumn from string to integer
+
 # Setup
 
 ## Application Setup
@@ -53,7 +62,7 @@ This repo contains one Stadium 6.7 application
 ## Type Setup
 1. Create a *Type* called "FormField"
 2. Add the following properties to the type
-   1. "name" (Any)
+   1. "column" (Any)
    2. "type" (Any)
    3. "required" (Any)
    4. "min" (Any)
@@ -69,15 +78,14 @@ This repo contains one Stadium 6.7 application
    1. ButtonClassName
    2. DataGridClass
    3. FormFields
-   4. IdentityColumnHeader
+   4. IdentityColumn
    5. CallbackScript
 3. Drag a *JavaScript* action into the script
 4. Add the Javascript below into the JavaScript code property
 ```javascript
-/* Stadium Script Version 1.5 https://github.com/stadium-software/datagrid-inline-edit */
+/*Stadium Script Version 2.0 https://github.com/stadium-software/datagrid-inline-edit */
 let scope = this;
 let random =  Math.round(Math.random() * 1000);
-resetDataGrid();
 let callback = ~.Parameters.Input.CallbackScript;
 let dgClassName = "." + ~.Parameters.Input.DataGridClass;
 let dg = document.querySelectorAll(dgClassName);
@@ -92,7 +100,7 @@ if (dg.length == 0) {
 dg.classList.add("stadium-inline-edit-datagrid");
 let table = dg.querySelector("table");
 let rowFormFields = ~.Parameters.Input.FormFields;
-let IDColumn = ~.Parameters.Input.IdentityColumnHeader;
+let IDColumn = ~.Parameters.Input.IdentityColumn;
 let buttonParentClass = ~.Parameters.Input.ButtonClassName;
 let buttons = document.querySelectorAll("." + buttonParentClass);
 if (buttons.length == 0) {
@@ -110,23 +118,15 @@ let setRowEditingMode = (e) => {
     }
     currentRow.classList.add("editing");
 };
-let getIndex = (heystack, needle) => {
-    return heystack.findIndex((col) => col.name == needle);
+let getElement = (haystack, needle, column) => {
+    return haystack.find(obj => {return obj[column] == needle;});
 };
 
+resetDataGrid();
 insertForm();
 initForm();
 
 function initForm(){
-    let formFields = enrichFormFields(rowFormFields);
-    let result = formFields.find((obj) => {
-        return obj.type == "Identity";
-    });
-    if (!result) {
-        console.error("The identity column was not found");
-        return false;
-    }
-
     let rows = table.querySelectorAll("tbody tr");
     let clonedTable = table.cloneNode(true);
     clonedTable.id = 'table-clone';
@@ -135,19 +135,42 @@ function initForm(){
         let origRow = rows[j];
         let editRow = clonedRows[j];
         editRow.id = origRow.id + "-clone";
-        editRow.setAttribute("identity", editRow.querySelector("td:nth-child(" + result.colNo + ")").textContent);
-        for (let i = 0; i < formFields.length; i++) {
-            let origCell = origRow.querySelectorAll("td")[i];
-            let editCell = editRow.querySelectorAll("td")[i];
-            let name = formFields[i].name;
+        let origCells = origRow.querySelectorAll("td");
+        let editCells = editRow.querySelectorAll("td");
+        for (let i = 0; i < origCells.length; i++) {
+            let colNum = i+1, type, data, min, max, required, el;
+            let origCell = origCells[i];
+            let editCell = editCells[i];
+            let ffield = getElement(rowFormFields, colNum, "column");
+            let heading = table.querySelector("thead th:nth-child(" + colNum + ")");
+            let name = "";
+            if (heading) name = heading.textContent;
             let value = origCell.textContent;
-            let type = formFields[i].type;
-            let data = formFields[i].data;
-            let min = formFields[i].min;
-            let max = formFields[i].max;
-            let required = formFields[i].required;
-            let el;
+            if (ffield) {
+                type = ffield.type;
+                data = ffield.data;
+                min = ffield.min;
+                max = ffield.max;
+                required = ffield.required;
+            }
             editRow.addEventListener("click", setRowEditingMode);
+            if (type == "text") {
+                el = document.createElement("input");
+                el.value = value;
+                el.setAttribute("stadium-form-name", name);
+                el.setAttribute("type", type);
+                el.classList.add("form-control");
+            }
+            if (type == "number") {
+                el = document.createElement("input");
+                el.setAttribute("type", "number");
+                if (min) el.setAttribute("min", min);
+                if (max) el.setAttribute("max", max);
+                el.setAttribute("onkeydown", "return event.keyCode !== 69");
+                el.value = value;
+                el.setAttribute("stadium-form-name", name);
+                el.classList.add("form-control");
+            }
             if (type == "date") {
                 el = document.createElement("input");
                 el.setAttribute("type", "date");
@@ -165,56 +188,53 @@ function initForm(){
                 el.setAttribute("stadium-form-name", name);
                 let d = new Date(value);
                 el.value = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
-            } else if (type == "number") {
-                el = document.createElement("input");
-                el.setAttribute("type", "number");
-                if (min) el.setAttribute("min", min);
-                if (max) el.setAttribute("max", max);
-                el.setAttribute("onkeydown", "return event.keyCode !== 69");
-                el.value = value;
-                el.setAttribute("stadium-form-name", name);
-                el.classList.add("form-control");
-            } else if (type == "checkbox") {
+            }
+            if (type == "checkbox") {
                 el = document.createElement("input");
                 el.setAttribute("stadium-form-name", name);
                 el.setAttribute("type", "checkbox");
                 if (value == "true" || value == "Yes" || value == "1") {
                     el.setAttribute("checked", "");
                 }
-            } else if (type == "dropdown") {
+            }
+            if (type == "dropdown") {
                 el = document.createElement("select");
                 for (let j = 0; j < data.length; j++) {
                     let option = document.createElement("option");
-                    option.text = data[j];
-                    option.value = data[j];
+                    option.text = data[j].text;
+                    option.value = data[j].value;
+                    if (data[j].text == value) {
+                        option.selected = true;
+                    }
                     el.appendChild(option);
                 }
-                el.value = value;
                 el.setAttribute("stadium-form-name", name);
                 el.classList.add("form-control");
-            } else if (type == "text") {
+            }
+            if (colNum == IDColumn) {
+                editCell.setAttribute("identity", editCell.textContent);
+                el = document.createElement("span");
+                el.textContent = value;
+                editRow.setAttribute("Identity", value);
+            }
+            if (origCell.querySelector(":not(button, a, [type='checkbox'])")) {
                 el = document.createElement("input");
                 el.value = value;
+                el.setAttribute("type", "hidden");
                 el.setAttribute("stadium-form-name", name);
-                el.setAttribute("type", type);
-                el.classList.add("form-control");
-            } else {
-                if (!origCell.querySelector("button")) {
-                    el = document.createElement("input");
-                    el.value = value;
-                    el.setAttribute("type", "hidden");
-                    el.setAttribute("stadium-form-name", name);
-                    editCell.textContent = value;
-                    el = document.createElement("span");
-                    el.textContent = value;
-                } else { 
-                    el = document.createElement("span");
-                }
+                editCell.textContent = value;
+                el = document.createElement("span");
+                el.textContent = value;
             }
-            el.classList.add("stadium-inline-form-control");
-            if (required) el.setAttribute("required", "");
-            editCell.innerHTML = "";
-            editCell.appendChild(el);
+            if (origCell.querySelector("button, a, [type='checkbox']")) {
+                el = document.createElement("span");
+            }
+            if (el) {
+                el.classList.add("stadium-inline-form-control");
+                if (required) el.setAttribute("required", "");
+                editCell.innerHTML = "";
+                editCell.appendChild(el);
+            }
         }
     }
     dg.appendChild(clonedTable);
@@ -280,6 +300,9 @@ function preparePage(clonedTbl) {
     clonedTbl.querySelector("tfoot").remove();
     clonedTbl.classList.add("edit-table");
     table.classList.add("edit-orig-table");
+
+    let hasStatusBar = dg.querySelector(".selection-status-bar");
+    if (hasStatusBar) hasStatusBar.style.display = "none";
 }
 async function saveButtonClick(e) { 
     e.preventDefault();
@@ -301,31 +324,6 @@ async function saveButtonClick(e) {
     await scope[callback](arrGridData);
     resetDataGrid();
 }
-function enrichFormFields(data) {
-    let arrHeadings = table.querySelectorAll("thead th");
-    data.forEach((element, index) => {
-        if (element.name) {
-            data[index].name = element.name.toLowerCase().replaceAll(" ", "");
-        } else { 
-            element.name = "";
-        }
-    });
-    for (let i = 0; i < arrHeadings.length; i++) {
-        let heading = arrHeadings[i].innerText.toLowerCase().replaceAll(" ", "");
-        let index = getIndex(data, heading);
-        if (index > -1) {
-            data[index].colNo = i + 1;
-        } else if (IDColumn.toString().toLowerCase() == arrHeadings[i].innerText.toLowerCase()) {
-            data.push({ name: IDColumn, colNo: i + 1, type: "Identity" });
-        } else if (IDColumn == (i + 1)) {
-            data.push({ name: "Identity", colNo: IDColumn, type: "Identity" });
-        } else { 
-            data.push({colNo: i + 1, name: heading});
-        }
-    }
-    data.sort((a, b) => a.colNo - b.colNo);
-    return data;
-}
 function resetDataGrid() { 
     let editTable = document.getElementById("table-clone");
     if (editTable) { 
@@ -339,6 +337,8 @@ function resetDataGrid() {
         document.querySelector(".stadium-inline-edit-datagrid").classList.remove("stadium-inline-edit-datagrid");
         document.querySelector(".edit-button-bar").remove();
     }
+    let hasStatusBar = dg.querySelector(".selection-status-bar");
+    if (hasStatusBar) hasStatusBar.style.display = "block";
 }
 function insertForm() { 
     let form = document.createElement('form');
@@ -371,7 +371,7 @@ function insertForm() {
 1. Drag a *List* action into the event script and name the List "FormFields"
 2. Set the List *Item Type* property to "Types.FormField"
 3. Define the editable columns of your datagrid and their form fields
-   1. name: The heading of the column
+   1. column: The column number (start counting at 1; include all datagrid columns)
    2. type: The type of the column. Supported are
       1. text
       2. date
@@ -384,44 +384,44 @@ function insertForm() {
    5. max: A maximum value for number or date columns
    6. data: A simple list of values for dropdowns (see example below)
 ```json
-= [{
-	"name": "End Date",
-	"type": "date",
-	"required": "true"
+[{
+ "column": 2,
+ "type": "text"
 },{
-	"name": "First Name",
-	"type": "text"
+ "column": 3,
+ "type": "text"
 },{
-	"name": "Last Name",
-	"type": "text"
+ "column": 4,
+ "type": "number",
+ "min": "0",
+ "max": "10",
+ "required": "true"
 },{
-	"name": "No of Children",
-	"type": "number",
-	"min": "0",
-	"max": "10",
-	"required": "true"
+ "column": 5,
+ "type": "number",
+ "min": "0",
+ "max": "10",
+ "required": "true"
 },{
-	"name": "No of Pets",
-	"type": "number",
-	"min": "0",
-	"max": "10",
-	"required": "true"
+ "column": 6,
+ "type": "date",
+ "min": "01-01-2010",
+ "max": "01-01-2024"
 },{
-	"name": "Start Date",
-	"type": "date",
-	"min": "01-01-2010",
-	"max": "01-01-2024"
+ "column": 7,
+ "type": "date",
+ "required": "true"
 },{
-	"name": "Healthy",
-	"type": "checkbox"
+ "column": 8,
+ "type": "checkbox"
 },{
-	"name": "Happy",
-	"type": "checkbox"
+ "column": 9,
+ "type": "checkbox"
 },{
-	"name": "Subscription",
-	"type": "dropdown",
-	"data": ["", "Subscribed", "Unsubscribed", "No data"],
-	"required": "true"
+ "column": 10,
+ "type": "dropdown",
+ "data": [{"text":"","value":""}, {"text":"Subscribed","value":"1"}, {"text":"Unsubscribed","value":"2"}, {"text":"No data","value":"3"}],
+ "required": "true"
 }]
 ```
 4. Drag the Global Script called "EditableDataGrid" into the event script
@@ -429,7 +429,7 @@ function insertForm() {
    1. ButtonClassName: The unique classname you assigned to the *Button* control (e.g. datagrid-inline-edit-button)
    2. DataGridClass: The unique classname you assigned to the *DataGrid* (e.g datagrid-inline-edit)
    3. FormFields: Select the *List* called "FormFields" from the dropdown
-   4. IdentityColumnHeader: The header of the column that uniquely identifies each row (e.g. ID) OR the column number (e.g. 1)
+   4. IdentityColumn: The column number (e.g. 1)
    5. CallbackScript: The name of the page-level script that will process the updated data (e.g. SaveGrid)
 
 ![Inline Editing Input Parameters](images/InlineEditingInputParameters.png)
