@@ -2,10 +2,14 @@
 
 Allowing users to conveniently and swiftly edit entire DataGrids
 
+## NOTE
+Once edited, the data in the DataGrid and the data in the Vue.js data model are no longer in sync. Be sure to refresh the DataGrid data after saving updates to facilitate the correct functioning of the DataGrid search and sort functionality. 
+
 https://github.com/stadium-software/datagrid-inline-edit/assets/2085324/4287fc6c-a790-4161-9fd2-c92e1d56da3d
 
 # Content
 - [Datagrid Inline Editing](#datagrid-inline-editing)
+  - [NOTE](#note)
 - [Content](#content)
   - [Version](#version)
 - [Setup](#setup)
@@ -425,7 +429,9 @@ function insertForm() {
    2. DataGridClass: The unique classname you assigned to the *DataGrid* (e.g datagrid-inline-edit)
    3. FormFields: Select the *List* called "FormFields" from the dropdown
    4. IdentityColumn: The column number (e.g. 1)
-   5. CallbackScript: The name of the page-level script that will process the updated data (e.g. SaveGrid)
+   5. CallbackScript: The name of the page-level script that will process the updated data (e.g. SaveGrid). 
+
+**NOTE: Be sure to refresh the DataGrid data after saving updates to facilitate the correct functioning of the DataGrid search and sort functionality**
 
 ![Inline Editing Input Parameters](images/InlineEditingInputParameters.png)
 
