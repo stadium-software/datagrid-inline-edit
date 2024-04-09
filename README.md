@@ -2,14 +2,10 @@
 
 Allowing users to conveniently and swiftly edit entire DataGrids
 
-## NOTE
-Once edited, the data in the DataGrid and the data in the Vue.js data model are no longer in sync. Be sure to refresh the DataGrid data after saving updates to facilitate the correct functioning of the DataGrid search and sort functionality. 
-
 https://github.com/stadium-software/datagrid-inline-edit/assets/2085324/4287fc6c-a790-4161-9fd2-c92e1d56da3d
 
 # Content
 - [Datagrid Inline Editing](#datagrid-inline-editing)
-  - [NOTE](#note)
 - [Content](#content)
   - [Version](#version)
 - [Setup](#setup)
