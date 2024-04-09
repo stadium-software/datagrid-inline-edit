@@ -427,7 +427,7 @@ function insertForm() {
    4. IdentityColumn: The column number (e.g. 1)
    5. CallbackScript: The name of the page-level script that will process the updated data (e.g. SaveGrid). 
 
-**NOTE: Be sure to refresh the DataGrid data after saving updates to ensure the correct functioning of the DataGrid search and sort functionality**
+**NOTE: To ensure the correct functioning of the DataGrid search and sort functionality, be sure to refresh the DataGrid data after saving updates**
 
 ![Inline Editing Input Parameters](images/InlineEditingInputParameters.png)
 
