@@ -22,19 +22,7 @@ https://github.com/stadium-software/datagrid-inline-edit/assets/2085324/4287fc6c
   - [CSS Upgrading](#css-upgrading)
 
 ## Version 
-
-1.1 DataGrid Editing
-1. Added code to return error when ID column is not found
-2. Added code to skip rules that do not have corresponding columns
-3. Added code to detect uniqueness of DataGrid class on page
-
-1.2 Updated script to cater for changed DataGrid rendering
-
-1.3 Added custom event handler feature
-
-1.4 Fixed Selectable column bug
-
-1.5 Enabled adding ID column as number; fixed bug: no ID column in result
+2.1 current version
 
 2.0 Added checkbox column support; changed header-based column definition to column count; added text and value definition for dropdowns. **Required changes**
 1. FormField Type: change "name" property to "column" (see [Type Setup](#type-setup))
@@ -42,9 +30,40 @@ https://github.com/stadium-software/datagrid-inline-edit/assets/2085324/4287fc6c
    1. Update to version below
    2. Change input parameter name "IdentityColumnHeader" to "IdentityColumn"
 3. Event handler (see [Button.Click Event Script](#buttonclick-event-setup))
-   1. Change FormFields list inputs for "column" (previously "name") from strings to integers
-   2. Change FormFields list inputs for "dropdown" from list of strings to list of objects (see [example below](#buttonclick-event-setup))
-   3. Amend value for script input parameter IDColumn from string to integer
+   1. Added support for dropdown text and value definition (see [example below](#buttonclick-event-setup))
+
+2.1 Changes
+1. Data changes are reflected in DataGrids
+2. Added support for DataGrid search and sort of changed values
+3. Returns columns as object properties. Example:
+```json
+[
+    {
+        "ID":1,
+        "FirstName":"Martina",
+        "LastName":"Vaughn",
+        "NoOfChildren":10,
+        "NoOfPets":9,
+        "StartDate":"2023-10-01",
+        "EndDate":"2023-10-02",
+        "Healthy":true,
+        "Happy":false,
+        "Subscription":"Subscribed"
+    },
+    {
+        "ID":2,
+        "FirstName":"Bruce",
+        "LastName":"ddd",
+        "NoOfChildren":10,
+        "NoOfPets":1,
+        "StartDate":"2023-06-19",
+        "EndDate":"2024-05-01",
+        "Healthy":true,
+        "Happy":false,
+        "Subscription":"Unsubscribed"
+    }
+]
+```
 
 # Setup
 
@@ -78,8 +97,9 @@ https://github.com/stadium-software/datagrid-inline-edit/assets/2085324/4287fc6c
 3. Drag a *JavaScript* action into the script
 4. Add the Javascript below into the JavaScript code property
 ```javascript
-/*Stadium Script Version 2.0 https://github.com/stadium-software/datagrid-inline-edit */
+/*Stadium Script Version 2.1 https://github.com/stadium-software/datagrid-inline-edit */
 let scope = this;
+let pageName = window.location.pathname.replace("/", "");
 let random =  Math.round(Math.random() * 1000);
 let callback = ~.Parameters.Input.CallbackScript;
 let dgClassName = "." + ~.Parameters.Input.DataGridClass;
@@ -93,10 +113,16 @@ if (dg.length == 0) {
     dg = dg[0];
 }
 dg.classList.add("stadium-inline-edit-datagrid");
+let datagridname = dg.id.replace(`${pageName}_`, "").replace("-container","");
 let table = dg.querySelector("table");
+let dataGridColumns = getColumnDefinition();
 let rowFormFields = ~.Parameters.Input.FormFields;
 let IDColumn = ~.Parameters.Input.IdentityColumn;
 let buttonParentClass = ~.Parameters.Input.ButtonClassName;
+if (!isNumber(IDColumn)) {
+    IDColumn = getElementIndex(dataGridColumns, IDColumn) + 1;
+}
+let idColumnName = dataGridColumns[IDColumn - 1];
 let buttons = document.querySelectorAll("." + buttonParentClass);
 if (buttons.length == 0) {
     console.error("There seems to be no button assigned to the DataGrid. Add a button to the page, assign a class to the button and add it to the 'ButtonClassName' parameter when you call the script");
@@ -132,15 +158,21 @@ function initForm(){
         editRow.id = origRow.id + "-clone";
         let origCells = origRow.querySelectorAll("td");
         let editCells = editRow.querySelectorAll("td");
+        let IDVal = origCells[IDColumn - 1].textContent;
+        if (isNumber(IDVal)) {
+            IDVal = parseFloat(IDVal);
+        }
+        let rowData = getElementFromObjects(scope[`${datagridname}Data`], IDVal, idColumnName);
+        editRow.setAttribute("data-id", IDVal);
         for (let i = 0; i < origCells.length; i++) {
-            let colNum = i+1, type, data, min, max, required, el;
+            let colNum = i+1, type, data, min, max, required, el, value;
             let origCell = origCells[i];
             let editCell = editCells[i];
             let ffield = getElement(rowFormFields, colNum, "column");
-            let heading = table.querySelector("thead th:nth-child(" + colNum + ")");
-            let name = "";
-            if (heading) name = heading.textContent;
-            let value = origCell.textContent;
+            let name = dataGridColumns[i];
+            if (!ffield) {
+                ffield = getElementFromObjects(rowFormFields, name, "column");
+            }
             if (ffield) {
                 type = ffield.type;
                 data = ffield.data;
@@ -148,6 +180,8 @@ function initForm(){
                 max = ffield.max;
                 required = ffield.required;
             }
+            if (name != "RowSelector") value = rowData[name];
+            console.log(value);
             editRow.addEventListener("click", setRowEditingMode);
             if (type == "text") {
                 el = document.createElement("input");
@@ -196,23 +230,31 @@ function initForm(){
                 el = document.createElement("select");
                 for (let j = 0; j < data.length; j++) {
                     let option = document.createElement("option");
-                    option.text = data[j].text;
-                    option.value = data[j].value;
-                    if (data[j].text == value) {
+                    if (typeof data[j].text != "undefined" && typeof data[j].value != "undefined") {
+                        option.text = data[j].text;
+                        option.value = data[j].value;
+                    } else if (typeof data[j] == "object") {
+                        let ob = Object.entries(data[j]);
+                        option.text = ob[0][0];
+                        option.value = ob[0][1];
+                    } else {
+                        option.text = data[j];
+                        option.value = data[j];
+                    }
+                    if (option.text == value) {
                         option.selected = true;
                     }
-                    el.appendChild(option);
+                        el.appendChild(option);
                 }
                 el.setAttribute("stadium-form-name", name);
                 el.classList.add("form-control");
             }
             if (colNum == IDColumn) {
-                editCell.setAttribute("identity", editCell.textContent);
+                editCell.setAttribute("identity", IDVal);
                 el = document.createElement("span");
                 el.textContent = value;
-                editRow.setAttribute("Identity", value);
             }
-            if (origCell.querySelector(":not(button, a, [type='checkbox'])")) {
+            if (origCell.querySelector(":not(button, a, [type='checkbox'])") && value) {
                 el = document.createElement("input");
                 el.value = value;
                 el.setAttribute("type", "hidden");
@@ -292,7 +334,6 @@ function preparePage(clonedTbl) {
         arrHeadings[i].innerHTML = heading.innerHTML;
     }
 
-    clonedTbl.querySelector("tfoot").remove();
     clonedTbl.classList.add("edit-table");
     table.classList.add("edit-orig-table");
 
@@ -301,36 +342,54 @@ function preparePage(clonedTbl) {
 }
 async function saveButtonClick(e) { 
     e.preventDefault();
-    let rows = document.querySelectorAll("#table-clone tbody tr");
+    let rows = dg.querySelectorAll("#table-clone tbody tr");
     let arrGridData = [];
     for (let j = 0; j < rows.length; j++) {
-        let formFields = rows[j].querySelectorAll("[stadium-form-name]");
-        let arrData = [];
-        let rowID = rows[j].getAttribute("Identity");
-        arrData.push({ Name: "Identity", Value: rowID });
-        for (let i = 0; i < formFields.length; i++) {
-            let fieldValue = formFields[i].value;
-            if (formFields[i].getAttribute("type") == "checkbox") fieldValue = formFields[i].checked;
-            let field = { Name: formFields[i].getAttribute("stadium-form-name"), Value: fieldValue };
-            arrData.push(field);
+        let objData = {}, callbackData = {};
+        let IDVal;
+        let cells = rows[j].cells;
+        for (let i = 0; i < cells.length; i++) {
+            let formField = cells[i].querySelector("[stadium-form-name]:not([stadium-form-name='']");
+            if (formField) {
+                let fieldValue = formField.value;
+                if (isNumber(fieldValue)) {
+                    fieldValue = parseFloat(fieldValue);
+                }
+                if (formField.getAttribute("type") == "checkbox") fieldValue = formField.checked;
+                if (dataGridColumns[i] != "RowSelector") objData[dataGridColumns[i]] = fieldValue;
+                objData[dataGridColumns[i]] = fieldValue;
+                if (formField.tagName == "SELECT") fieldValue = formField.options[formField.selectedIndex].text;
+                callbackData[dataGridColumns[i]] = fieldValue;
+            } else if (IDColumn-1 == i){
+                IDVal = cells[i].getAttribute("Identity");
+                if (isNumber(IDVal)) {
+                    IDVal = parseFloat(IDVal);
+                }
+                objData[dataGridColumns[i]] = IDVal;
+                callbackData[dataGridColumns[i]] = IDVal;
+            }
         }
-        arrGridData.push(arrData);
+        updateDataModelRow(IDVal, callbackData);
+        arrGridData.push(objData);
     }
     await scope[callback](arrGridData);
     resetDataGrid();
 }
 function resetDataGrid() { 
-    let editTable = document.getElementById("table-clone");
-    if (editTable) { 
+    let form = document.getElementById("form" + random);
+    if (form) { 
+        let editTable = form.querySelector("#table-clone");
         editTable.remove();
-        let form = document.getElementById("form" + random);
+        form.querySelector(".edit-orig-table").classList.remove("edit-orig-table");
+        dg.classList.remove("stadium-inline-edit-datagrid");
+        let buttonContainer = document.querySelector("." + buttonParentClass);
+        if (buttonContainer) {
+            buttonContainer.querySelector("button").classList.remove("visually-hidden");
+            buttonContainer.classList.remove("stadium-inline-edit-datagrid-button");
+            buttonContainer.querySelector(".edit-button-bar").remove();
+        }
         form.parentElement.insertBefore(dg, form);
         form.remove();
-        document.querySelector(".edit-orig-table").classList.remove("edit-orig-table");
-        document.querySelector(".stadium-inline-edit-datagrid-button button").classList.remove("visually-hidden");
-        document.querySelector(".stadium-inline-edit-datagrid-button").classList.remove("stadium-inline-edit-datagrid-button");
-        document.querySelector(".stadium-inline-edit-datagrid").classList.remove("stadium-inline-edit-datagrid");
-        document.querySelector(".edit-button-bar").remove();
     }
     let hasStatusBar = dg.querySelector(".selection-status-bar");
     if (hasStatusBar) hasStatusBar.style.display = "block";
@@ -343,6 +402,31 @@ function insertForm() {
     dg.parentElement.insertBefore(form, dg);
     form.appendChild(dg);
 }
+function getElementIndex(haystack, needle) {
+    return haystack.indexOf(needle);
+}
+function getElementFromObjects(haystack, needle, column) {
+    return haystack.find(obj => {return obj[column] == needle;});
+}
+function updateDataModelRow(id, rowData){
+    let handler1 = {};
+    let dgData = scope[`${datagridname}Data`];
+    let result = dgData.map(el => el[dataGridColumns[IDColumn-1]] == id ? new Proxy(rowData, handler1) : el);
+    scope[`${datagridname}Data`] = result;
+}
+function getColumnDefinition(){
+    let cols = [];
+    let colDefs = scope[`${datagridname}ColumnDefinitions`];
+    if (table.querySelector("thead th:nth-child(1) input[type=checkbox")) cols.push("RowSelector");
+    for (let i = 0; i < colDefs.length; i++) {
+        cols.push(colDefs[i].name);
+    }
+    return cols;
+}
+function isNumber(value) {
+    if (isNaN(value)) value = value.replace(/ /g,"");
+    return !isNaN(value);
+}
 ```
 
 ## Page-Script Setup
@@ -351,6 +435,7 @@ function insertForm() {
    1. GridData
 3. Drag a *Notification* action into the script
 4. In the *Message* property, select the *GridData* parameter from the *Script Input Parameters* category
+5. When changes are saved, the Notification will display the data being passed into the callback script
 
 ## Page Setup
 1. Drag a *Button* control into the page and enter some text (e.g. Edit DataGrid)
@@ -366,7 +451,8 @@ function insertForm() {
 1. Drag a *List* action into the event script and name the List "FormFields"
 2. Set the List *Item Type* property to "Types.FormField"
 3. Define the editable columns of your datagrid and their form fields
-   1. column: The column number (start counting at 1; include all datagrid columns)
+   1. column: The column number (start counting at 1; include all datagrid columns) OR the column property name as it appears in the list of columns and the column "Name" property
+![ColumnPropertyName](images/ColumnPropertyName.png)
    2. type: The type of the column. Supported are
       1. text
       2. date
@@ -380,10 +466,10 @@ function insertForm() {
    6. data: A simple list of values for dropdowns (see example below)
 ```json
 [{
- "column": 2,
+ "column": "FirstName",
  "type": "text"
 },{
- "column": 3,
+ "column": "LastName",
  "type": "text"
 },{
  "column": 4,
@@ -415,19 +501,17 @@ function insertForm() {
 },{
  "column": 10,
  "type": "dropdown",
- "data": [{"text":"","value":""}, {"text":"Subscribed","value":"1"}, {"text":"Unsubscribed","value":"2"}, {"text":"No data","value":"3"}],
+ "data": [{"text":"","value":""}, {"text":"Subscribed","value":1}, {"text":"Unsubscribed","value":2}, {"text":"No data","value":3}],
  "required": "true"
 }]
 ```
-4. Drag the Global Script called "EditableDataGrid" into the event script
-5. Complete the Input properties for the script
+1. Drag the Global Script called "EditableDataGrid" into the event script
+2. Complete the Input properties for the script
    1. ButtonClassName: The unique classname you assigned to the *Button* control (e.g. datagrid-inline-edit-button)
    2. DataGridClass: The unique classname you assigned to the *DataGrid* (e.g datagrid-inline-edit)
    3. FormFields: Select the *List* called "FormFields" from the dropdown
-   4. IdentityColumn: The column number (e.g. 1)
+   4. IdentityColumn: The column number (e.g. 1) OR the column property name as it appears in the list of columns and the column "Name" property
    5. CallbackScript: The name of the page-level script that will process the updated data (e.g. SaveGrid). 
-
-**NOTE: To ensure the correct functioning of the DataGrid search and sort functionality, be sure to refresh the DataGrid data after saving updates**
 
 ![Inline Editing Input Parameters](images/InlineEditingInputParameters.png)
 

@@ -1,5 +1,8 @@
-/* CSS version 1.0 https: //github.com/stadium-software/datagrid-inline-edit */
+/* CSS version 2.1 https: //github.com/stadium-software/datagrid-inline-edit */
 .datagrid-inline-edit-form {
+	:has(#table-clone) :is(.data-grid-header, tfoot) {
+		display: none;
+	}
 	& .visually-hidden {
 		height: 0;
 		width: 0;
