@@ -120,7 +120,7 @@ let rowFormFields = ~.Parameters.Input.FormFields;
 let IDColumn = ~.Parameters.Input.IdentityColumn;
 let buttonParentClass = ~.Parameters.Input.ButtonClassName;
 if (!isNumber(IDColumn)) {
-    IDColumn = dataGridColumns[IDColumn - 1];
+    IDColumn = getElementIndex(dataGridColumns, IDColumn) + 1;
 }
 let idColumnName = dataGridColumns[IDColumn - 1];
 let buttons = document.querySelectorAll("." + buttonParentClass);
@@ -396,6 +396,9 @@ function insertForm() {
     form.addEventListener("submit", saveButtonClick);
     dg.parentElement.insertBefore(form, dg);
     form.appendChild(dg);
+}
+function getElementIndex(haystack, needle) {
+    return haystack.indexOf(needle);
 }
 function getElementFromObjects(haystack, needle, column) {
     return haystack.find(obj => {return obj[column] == needle;});
