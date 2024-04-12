@@ -120,7 +120,7 @@ let rowFormFields = ~.Parameters.Input.FormFields;
 let IDColumn = ~.Parameters.Input.IdentityColumn;
 let buttonParentClass = ~.Parameters.Input.ButtonClassName;
 if (!isNumber(IDColumn)) {
-    IDColumn = getElementIndex(dataGridColumns, IDColumn) + 1;
+    IDColumn = dataGridColumns[IDColumn - 1];
 }
 let idColumnName = dataGridColumns[IDColumn - 1];
 let buttons = document.querySelectorAll("." + buttonParentClass);
@@ -181,7 +181,6 @@ function initForm(){
                 required = ffield.required;
             }
             if (name != "RowSelector") value = rowData[name];
-            console.log(value);
             editRow.addEventListener("click", setRowEditingMode);
             if (type == "text") {
                 el = document.createElement("input");
@@ -254,16 +253,16 @@ function initForm(){
                 el = document.createElement("span");
                 el.textContent = value;
             }
-            if (origCell.querySelector(":not(button, a, [type='checkbox'])") && value) {
-                el = document.createElement("input");
-                el.value = value;
-                el.setAttribute("type", "hidden");
-                el.setAttribute("stadium-form-name", name);
-                editCell.textContent = value;
-                el = document.createElement("span");
+            if (!type && !origCell.querySelector(":is(button, a, [type='checkbox'])")) {
+                let inpt = document.createElement("input");
+                inpt.value = value;
+                inpt.setAttribute("type", "hidden");
+                inpt.setAttribute("stadium-form-name", name);
+                el = document.createElement("div");
                 el.textContent = value;
+                el.appendChild(inpt);
             }
-            if (origCell.querySelector("button, a, [type='checkbox']")) {
+            if (origCell.querySelector(":is(button, a, [type='checkbox'])")) {
                 el = document.createElement("span");
             }
             if (el) {
@@ -360,13 +359,9 @@ async function saveButtonClick(e) {
                 objData[dataGridColumns[i]] = fieldValue;
                 if (formField.tagName == "SELECT") fieldValue = formField.options[formField.selectedIndex].text;
                 callbackData[dataGridColumns[i]] = fieldValue;
-            } else if (IDColumn-1 == i){
-                IDVal = cells[i].getAttribute("Identity");
-                if (isNumber(IDVal)) {
-                    IDVal = parseFloat(IDVal);
+                if (cells[i].getAttribute("Identity")) {
+                    IDVal = cells[i].getAttribute("Identity");
                 }
-                objData[dataGridColumns[i]] = IDVal;
-                callbackData[dataGridColumns[i]] = IDVal;
             }
         }
         updateDataModelRow(IDVal, callbackData);
@@ -401,9 +396,6 @@ function insertForm() {
     form.addEventListener("submit", saveButtonClick);
     dg.parentElement.insertBefore(form, dg);
     form.appendChild(dg);
-}
-function getElementIndex(haystack, needle) {
-    return haystack.indexOf(needle);
 }
 function getElementFromObjects(haystack, needle, column) {
     return haystack.find(obj => {return obj[column] == needle;});
