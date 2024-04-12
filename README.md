@@ -27,7 +27,7 @@ https://github.com/stadium-software/datagrid-inline-edit/assets/2085324/ea67ef78
 2.0 Added checkbox column support; changed header-based column definition to column count; added text and value definition for dropdowns. **Required changes**
 1. FormField Type: change "name" property to "column" (see [Type Setup](#type-setup))
 2. Script (see [Global Script Setup](#global-script-setup))
-   1. Update to version below
+   1. Update script to version below
    2. Change input parameter name "IdentityColumnHeader" to "IdentityColumn"
 3. Event handler (see [Button.Click Event Script](#buttonclick-event-setup))
    1. Added support for dropdown text and value definition (see [example below](#buttonclick-event-setup))
