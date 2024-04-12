@@ -2,7 +2,7 @@
 
 Allowing users to conveniently and swiftly edit entire DataGrids
 
-https://github.com/stadium-software/datagrid-inline-edit/assets/2085324/4287fc6c-a790-4161-9fd2-c92e1d56da3d
+https://github.com/stadium-software/datagrid-inline-edit/assets/2085324/ea67ef78-23b1-468e-bd44-31b10d652d72
 
 # Content
 - [Datagrid Inline Editing](#datagrid-inline-editing)
