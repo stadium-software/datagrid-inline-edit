@@ -419,6 +419,7 @@ function getColumnDefinition(){
     return cols;
 }
 function isNumber(value) {
+    if (value == '') return false;
     if (isNaN(value)) value = value.replace(/ /g,"");
     return !isNaN(value);
 }
