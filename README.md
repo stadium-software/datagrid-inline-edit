@@ -159,9 +159,7 @@ function initForm(){
         let origCells = origRow.querySelectorAll("td");
         let editCells = editRow.querySelectorAll("td");
         let IDVal = origCells[IDColumn - 1].textContent;
-        if (isNumber(IDVal)) {
-            IDVal = parseFloat(IDVal);
-        }
+        IDVal = convertToNumber(IDVal);
         let rowData = getElementFromObjects(scope[`${datagridname}Data`], IDVal, idColumnName);
         editRow.setAttribute("data-id", IDVal);
         for (let i = 0; i < origCells.length; i++) {
@@ -181,7 +179,6 @@ function initForm(){
                 required = ffield.required;
             }
             if (name != "RowSelector") value = rowData[name];
-            editRow.addEventListener("click", setRowEditingMode);
             if (type == "text") {
                 el = document.createElement("input");
                 el.value = value;
@@ -214,8 +211,10 @@ function initForm(){
                     el.setAttribute("max", max);
                 }
                 el.setAttribute("stadium-form-name", name);
-                let d = new Date(value);
-                el.value = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+                if (value) {
+                    let d = new Date(value);
+                    el.value = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+                }
             }
             if (type == "checkbox") {
                 el = document.createElement("input");
@@ -265,12 +264,11 @@ function initForm(){
             if (origCell.querySelector(":is(button, a, [type='checkbox'])")) {
                 el = document.createElement("span");
             }
-            if (el) {
-                el.classList.add("stadium-inline-form-control");
-                if (required) el.setAttribute("required", "");
-                editCell.innerHTML = "";
-                editCell.appendChild(el);
-            }
+            editRow.addEventListener("click", setRowEditingMode);
+            el.classList.add("stadium-inline-form-control");
+            if (required) el.setAttribute("required", "");
+            editCell.innerHTML = "";
+            editCell.appendChild(el);
         }
     }
     dg.appendChild(clonedTable);
@@ -351,11 +349,9 @@ async function saveButtonClick(e) {
             let formField = cells[i].querySelector("[stadium-form-name]:not([stadium-form-name='']");
             if (formField) {
                 let fieldValue = formField.value;
-                if (isNumber(fieldValue)) {
-                    fieldValue = parseFloat(fieldValue);
-                }
+                fieldValue = convertToNumber(fieldValue);
                 if (formField.getAttribute("type") == "checkbox") fieldValue = formField.checked;
-                if (dataGridColumns[i] != "RowSelector") objData[dataGridColumns[i]] = fieldValue;
+                //if (dataGridColumns[i] != "RowSelector") objData[dataGridColumns[i]] = fieldValue;
                 objData[dataGridColumns[i]] = fieldValue;
                 if (formField.tagName == "SELECT") fieldValue = formField.options[formField.selectedIndex].text;
                 callbackData[dataGridColumns[i]] = fieldValue;
@@ -418,10 +414,17 @@ function getColumnDefinition(){
     }
     return cols;
 }
-function isNumber(value) {
-    if (value == '') return false;
-    if (isNaN(value)) value = value.replace(/ /g,"");
-    return !isNaN(value);
+function isNumber(str) {
+    if (typeof str == "number") return true;
+    return !isNaN(str) && !isNaN(parseFloat(str));
+}
+function convertToNumber(val) {
+    if (!isNumber(val)) {
+        let no;
+        if (typeof val == "string") no = val.replace(/ /g,"");
+        if (isNumber(no)) return no;
+    }
+    return val;
 }
 ```
 
