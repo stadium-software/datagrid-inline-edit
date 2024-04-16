@@ -99,7 +99,8 @@ https://github.com/stadium-software/datagrid-inline-edit/assets/2085324/ea67ef78
 ```javascript
 /*Stadium Script Version 2.1 https://github.com/stadium-software/datagrid-inline-edit */
 let scope = this;
-let pageName = window.location.pathname.replace("/", "");
+let arrPageName = window.location.pathname.split("/");
+let pageName = arrPageName[arrPageName.length - 1];
 let random =  Math.round(Math.random() * 1000);
 let callback = ~.Parameters.Input.CallbackScript;
 let dgClassName = "." + ~.Parameters.Input.DataGridClass;
@@ -191,7 +192,11 @@ function initForm(){
                 el.setAttribute("type", "number");
                 if (min) el.setAttribute("min", min);
                 if (max) el.setAttribute("max", max);
-                el.setAttribute("onkeydown", "return event.keyCode !== 69");
+                el.addEventListener("keydown",function(e) {
+                    if (e.key.toLowerCase() === "e") { 
+                        e.preventDefault();
+                    }
+                }, false);
                 el.value = value;
                 el.setAttribute("stadium-form-name", name);
                 el.classList.add("form-control");
