@@ -427,7 +427,9 @@ function convertToNumber(val) {
     if (!isNumber(val)) {
         let no;
         if (typeof val == "string") no = val.replace(/ /g,"");
-        if (isNumber(no)) return no;
+        if (isNumber(no)) return Number(no);
+    } else {
+        val = Number(val);
     }
     return val;
 }
