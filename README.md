@@ -65,7 +65,7 @@ https://github.com/stadium-software/datagrid-inline-edit/assets/2085324/ea67ef78
 ]
 ```
 
-2.2 Fixed "control in template" bug
+2.2 Fixed "control in template" bug; enhanced "FormField" data type
 
 # Setup
 
@@ -84,7 +84,9 @@ https://github.com/stadium-software/datagrid-inline-edit/assets/2085324/ea67ef78
    4. "min" (Any)
    5. "max" (Any)
    6. "data" (List)
-      1. "Item" (Any)
+      1. "Item" (Object)
+         1. "text" (Any)
+         2. "value" (Any)
 
 ![Form Fields](images/FormFieldType.png)
 
@@ -158,6 +160,7 @@ function initForm(){
     let rows = table.querySelectorAll("tbody tr");
     let clonedTable = table.cloneNode(true);
     clonedTable.id = 'table-clone';
+    clonedTable.querySelector("tfoot").remove();
     let clonedRows = clonedTable.querySelectorAll("tbody tr");
     for (let j = 0; j < rows.length; j++){
         let origRow = rows[j];
