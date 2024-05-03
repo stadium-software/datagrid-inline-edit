@@ -65,6 +65,8 @@ https://github.com/stadium-software/datagrid-inline-edit/assets/2085324/ea67ef78
 ]
 ```
 
+2.2 Fixed "control in template" bug
+
 # Setup
 
 ## Application Setup
@@ -97,16 +99,20 @@ https://github.com/stadium-software/datagrid-inline-edit/assets/2085324/ea67ef78
 3. Drag a *JavaScript* action into the script
 4. Add the Javascript below into the JavaScript code property
 ```javascript
-/*Stadium Script Version 2.1 https://github.com/stadium-software/datagrid-inline-edit */
+/*Stadium Script Version 2.2 https://github.com/stadium-software/datagrid-inline-edit */
 let scope = this;
-let arrPageName = window.location.pathname.split("/");
-let pageName = arrPageName[arrPageName.length - 1];
 let random =  Math.round(Math.random() * 1000);
 let callback = ~.Parameters.Input.CallbackScript;
-let dgClassName = "." + ~.Parameters.Input.DataGridClass;
+let classInput = ~.Parameters.Input.DataGridClass;
+if (typeof classInput == "undefined") {
+    console.error("The DataGridClass parameter is required");
+    return false;
+} 
+let dgClassName = "." + classInput;
 let dg = document.querySelectorAll(dgClassName);
 if (dg.length == 0) {
-    dg = document.querySelector(".data-grid-container");
+    console.error("The class '" + dgClassName + "' is not assigned to any DataGrid");
+    return false;
 } else if (dg.length > 1) {
     console.error("The class '" + dgClassName + "' is assigned to multiple DataGrids. DataGrids using this script must have unique classnames");
     return false;
@@ -114,7 +120,7 @@ if (dg.length == 0) {
     dg = dg[0];
 }
 dg.classList.add("stadium-inline-edit-datagrid");
-let datagridname = dg.id.replace(`${pageName}_`, "").replace("-container","");
+let datagridname = dg.id.split("_")[1].replace("-container","");
 let table = dg.querySelector("table");
 let dataGridColumns = getColumnDefinition();
 let rowFormFields = ~.Parameters.Input.FormFields;
@@ -356,7 +362,6 @@ async function saveButtonClick(e) {
                 let fieldValue = formField.value;
                 fieldValue = convertToNumber(fieldValue);
                 if (formField.getAttribute("type") == "checkbox") fieldValue = formField.checked;
-                //if (dataGridColumns[i] != "RowSelector") objData[dataGridColumns[i]] = fieldValue;
                 objData[dataGridColumns[i]] = fieldValue;
                 if (formField.tagName == "SELECT") fieldValue = formField.options[formField.selectedIndex].text;
                 callbackData[dataGridColumns[i]] = fieldValue;
