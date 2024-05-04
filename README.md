@@ -445,7 +445,7 @@ function convertToNumber(val) {
 
 ## Page-Script Setup
 1. Add a script to the page (e.g. "SaveGrid")
-2. Add an input parameter to the script called "GridData"
+2. Add an input parameter to the script (e.g. "GridData")
 3. Drag a *Notification* action into the script
 4. In the *Message* property, select the *GridData* parameter from the *Script Input Parameters* category
 5. When changes are saved, the Notification will display the data being passed into the callback script
