@@ -447,8 +447,7 @@ function convertToNumber(val) {
 1. Add a script to the page (e.g. "SaveGrid")
 2. Add an input parameter to the script (e.g. "GridData")
 3. Drag a *Notification* action into the script
-4. In the *Message* property, select the *GridData* parameter from the *Script Input Parameters* category
-5. When changes are saved, the Notification will display the data being passed into the callback script
+4. In the *Message* property of the *Notification*, select the *GridData* parameter from the *Script Input Parameters* category. When changes are saved by the user, the Notification will display the data being passed into the callback script
 
 ## Page Setup
 1. Drag a *Button* control into the page and enter some text (e.g. Edit DataGrid)
