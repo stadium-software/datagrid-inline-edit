@@ -475,7 +475,7 @@ function convertToNumber(val) {
    3. required: A boolean (add "true" if required)
    4. min: A minimum value for number or date columns
    5. max: A maximum value for number or date columns
-   6. data: A simple list of values for dropdowns (see example below)
+   6. data: A list of text & value objects for dropdowns (see example below)
 ```json
 [{
  "column": "FirstName",
@@ -517,8 +517,8 @@ function convertToNumber(val) {
  "required": "true"
 }]
 ```
-1. Drag the Global Script called "EditableDataGrid" into the event script
-2. Complete the Input properties for the script
+7. Drag the Global Script called "EditableDataGrid" into the event script
+8. Complete the Input properties for the script
    1. ButtonClassName: The unique classname you assigned to the *Button* control (e.g. datagrid-inline-edit-button)
    2. DataGridClass: The unique classname you assigned to the *DataGrid* (e.g datagrid-inline-edit)
    3. FormFields: Select the *List* called "FormFields" from the dropdown
