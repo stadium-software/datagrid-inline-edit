@@ -444,7 +444,7 @@ function convertToNumber(val) {
 ```
 
 ## Page-Script Setup
-1. Create a Script inside of the Page with any name you like (e.g. "SaveGrid")
+1. Add a script to the page (e.g. "SaveGrid")
 2. Add one input parameter to the Script
    1. GridData
 3. Drag a *Notification* action into the script
