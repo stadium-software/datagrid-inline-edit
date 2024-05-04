@@ -92,7 +92,7 @@ https://github.com/stadium-software/datagrid-inline-edit/assets/2085324/ea67ef78
 
 ## Global Script Setup
 1. Create a Global Script called "EditableDataGrid"
-2. Add four input parameters to the Global Script
+2. Add the input parameters below to the Global Script
    1. ButtonClassName
    2. DataGridClass
    3. FormFields
