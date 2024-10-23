@@ -2,6 +2,10 @@
 
 Allowing users to conveniently and swiftly edit entire DataGrids
 
+**NOTE**
+
+Consider using the [Repeater Client-Side DataGrid](https://github.com/stadium-software/repeater-datagrid) in place of this module. *Repeater* controls are more extensible and easier to customise that DataGrids. 
+
 https://github.com/stadium-software/datagrid-inline-edit/assets/2085324/ea67ef78-23b1-468e-bd44-31b10d652d72
 
 # Content
